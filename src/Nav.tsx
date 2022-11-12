@@ -1,4 +1,4 @@
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Pressable } from "react-native";
 import Constants from "expo-constants";
 import { Palette } from "../style/palette";
 import { SettingsSVG } from "./Svgs";
@@ -41,7 +41,9 @@ export const Nav = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.logo}>simpli-RAP-wallet</Text>
-      <SettingsSVG style={styles.settings} />
+      <Pressable style={styles.settings}>
+        <SettingsSVG />
+      </Pressable>
     </View>
   );
 };

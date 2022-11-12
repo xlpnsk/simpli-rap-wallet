@@ -95,3 +95,17 @@ export const Blob3SVG = (props: SvgProps) => (
     />
   </Svg>
 );
+
+export const CardLineSVG = (props: SvgProps) => (
+  <Svg
+    xmlns="http://www.w3.org/2000/svg"
+    style={{
+      strokeDasharray: 2.5,
+      strokeDashoffset: 2.9,
+    }}
+    viewBox="0 0 172.03 0.8"
+    {...props}
+  >
+    <Path d="M0 .5h172" fill="none" stroke="#000" />
+  </Svg>
+);

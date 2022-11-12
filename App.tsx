@@ -7,6 +7,7 @@ import * as React from "react";
 import { AddButton } from "./src/components/AddButton";
 import { Palette } from "./style/palette";
 import { Blob1SVG, Blob2SVG, Blob3SVG } from "./src/Svgs";
+import Wallet from "./src/wallet/WalletFlatList";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -31,15 +32,7 @@ export default function App() {
       <Blob1SVG style={styles.blob1} />
       <Blob2SVG style={styles.blob2} />
       <Blob3SVG style={styles.blob3} />
-      <Text
-        style={{
-          fontFamily: "Poppins-Regular",
-          fontSize: 30,
-          textAlign: "center",
-        }}
-      >
-        Open up App.js to start working on your app!
-      </Text>
+      <Wallet />
       <AddButton onPress={() => console.log()} />
       <StatusBar style="auto" />
     </View>
