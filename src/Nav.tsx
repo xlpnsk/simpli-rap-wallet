@@ -47,3 +47,9 @@ export const Nav = () => {
     </View>
   );
 };
+
+export const Settings = () => (
+  <Pressable style={styles.settings}>
+    <SettingsSVG />
+  </Pressable>
+);

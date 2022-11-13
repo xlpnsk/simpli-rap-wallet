@@ -1,15 +1,42 @@
 import { StatusBar } from "expo-status-bar";
 import { Button, StyleSheet, Text, View } from "react-native";
-import { Nav } from "./src/Nav";
+import { Nav, Settings } from "./src/Nav";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import * as React from "react";
 import { AddButton } from "./src/components/AddButton";
 import { Palette } from "./style/palette";
-import { Blob1SVG, Blob2SVG, Blob3SVG } from "./src/Svgs";
-import Wallet from "./src/wallet/WalletFlatList";
+
+import Map from "./src/map";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { Home } from "./src/home";
+import { SettingsSVG } from "./src/Svgs";
+
+const styles = StyleSheet.create({
+  header: {
+    backgroundColor: Palette.DarkBlue,
+    alignItems: "center",
+    overflow: "hidden",
+  },
+  title: {
+    fontFamily: "Poppins-Regular",
+    fontWeight: "900",
+    color: Palette.LightBlue,
+    fontSize: 16,
+    lineHeight: 24,
+  },
+});
 
 SplashScreen.preventAutoHideAsync();
+
+const Stack = createNativeStackNavigator();
+
+export type RootStackParamList = {
+  Home: undefined;
+  Map: { userId: string };
+};
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -25,41 +52,34 @@ export default function App() {
   if (!fontsLoaded) {
     return null;
   }
-
   return (
-    <View style={styles.container} onLayout={onLayoutRootView}>
-      <Nav />
-      <Blob1SVG style={styles.blob1} />
-      <Blob2SVG style={styles.blob2} />
-      <Blob3SVG style={styles.blob3} />
-      <Wallet />
-      <AddButton onPress={() => console.log()} />
+    <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Home">
+          <Stack.Screen
+            name="Home"
+            component={Home}
+            options={{
+              headerRight: Settings,
+              headerStyle: styles.header,
+              headerTintColor: Palette.LightBlue,
+              headerTitleStyle: styles.title,
+              title: "simpli-RAP-wallet",
+            }}
+          />
+          <Stack.Screen
+            name="Map"
+            component={Map}
+            options={{
+              headerStyle: styles.header,
+              headerTintColor: Palette.LightBlue,
+              headerTitleStyle: styles.title,
+            }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+
       <StatusBar style="auto" />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Palette.LightBlue,
-  },
-  blob1: {
-    position: "absolute",
-    top: 39,
-    right: 0,
-    zIndex: -1,
-  },
-  blob2: {
-    position: "absolute",
-    bottom: 129,
-    right: 0,
-    zIndex: -1,
-  },
-  blob3: {
-    position: "absolute",
-    bottom: 67,
-    left: 0,
-    zIndex: -1,
-  },
-});

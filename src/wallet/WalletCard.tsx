@@ -1,5 +1,7 @@
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
 import { Animated, Dimensions, StyleSheet, View } from "react-native";
+import { RootStackParamList } from "../../App";
 import Card, { CARD_HEIGHT as DEFAULT_CARD_HEIGHT } from "./Card";
 
 export const MARGIN = 16;
@@ -13,12 +15,14 @@ const styles = StyleSheet.create({
   },
 });
 
-interface WalletCardProps {
+type Props = NativeStackScreenProps<RootStackParamList, "Home">;
+
+interface WalletCardProps extends Props {
   y: Animated.Value;
   index: number;
 }
 
-const WalletCard = ({ y, index }: WalletCardProps) => {
+const WalletCard = ({ y, index, navigation }: WalletCardProps) => {
   const position = Animated.subtract(index * CARD_HEIGHT, y);
   const isDisappearing = -CARD_HEIGHT;
   const isTop = 0;
@@ -53,7 +57,7 @@ const WalletCard = ({ y, index }: WalletCardProps) => {
       style={[styles.card, { opacity, transform: [{ translateY }, { scale }] }]}
       key={index}
     >
-      <Card />
+      <Card navigation={navigation} />
     </Animated.View>
   );
 };

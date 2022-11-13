@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default () => {
+const Card = ({ navigation }) => {
   let source: number;
   return (
     <View style={styles.card} {...{ source }}>
@@ -66,7 +66,10 @@ export default () => {
         <Text style={styles.shopName}>Shop name</Text>
       </View>
       <View style={[styles.cardInner]}>
-        <Pressable style={styles.mapContainer}>
+        <Pressable
+          style={styles.mapContainer}
+          onPress={() => navigation.navigate("Map")}
+        >
           <Image
             source={{
               uri: "https://i.stack.imgur.com/HILmr.png",
@@ -96,3 +99,4 @@ export default () => {
     </View>
   );
 };
+export default Card;
