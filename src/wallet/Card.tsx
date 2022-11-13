@@ -56,6 +56,23 @@ const styles = StyleSheet.create({
     position: "relative",
     overflow: "hidden",
   },
+  innerFrame: {
+    width: "100%",
+    height: "100%",
+    position: "absolute",
+    top: 0,
+    left: 0,
+    flex: 1,
+    zIndex: 2,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(0, 0, 0, .3)",
+  },
+  innerFrameText: {
+    color: "#ffffff",
+    fontFamily: "Poppins-Regular",
+    fontWeight: "600",
+  },
 });
 
 const Card = ({ navigation }) => {
@@ -70,6 +87,7 @@ const Card = ({ navigation }) => {
           style={styles.mapContainer}
           onPress={() => navigation.navigate("Map")}
         >
+          <View style={styles.innerFrame}></View>
           <Image
             source={{
               uri: "https://i.stack.imgur.com/HILmr.png",

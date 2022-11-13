@@ -2,6 +2,7 @@ import { View, StyleSheet, Text, Pressable } from "react-native";
 import Constants from "expo-constants";
 import { Palette } from "../style/palette";
 import { SettingsSVG } from "./Svgs";
+import { CommonActions, useNavigation } from "@react-navigation/native";
 
 const styles = StyleSheet.create({
   container: {
@@ -48,8 +49,14 @@ export const Nav = () => {
   );
 };
 
-export const Settings = () => (
-  <Pressable style={styles.settings}>
-    <SettingsSVG />
-  </Pressable>
-);
+export const SettingsButton = () => {
+  const navigation = useNavigation();
+  return (
+    <Pressable
+      style={styles.settings}
+      onPress={() => navigation.dispatch(CommonActions.navigate("Settings"))}
+    >
+      <SettingsSVG />
+    </Pressable>
+  );
+};

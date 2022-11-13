@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import { Button, StyleSheet, Text, View } from "react-native";
-import { Nav, Settings } from "./src/Nav";
+import { Nav, SettingsButton } from "./src/Nav";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import * as React from "react";
@@ -11,8 +11,9 @@ import Map from "./src/map";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Home } from "./src/home";
+import Home from "./src/home";
 import { SettingsSVG } from "./src/Svgs";
+import Settings from "./src/settings";
 
 const styles = StyleSheet.create({
   header: {
@@ -36,6 +37,7 @@ const Stack = createNativeStackNavigator();
 export type RootStackParamList = {
   Home: undefined;
   Map: { userId: string };
+  Settings: undefined;
 };
 
 export default function App() {
@@ -60,7 +62,7 @@ export default function App() {
             name="Home"
             component={Home}
             options={{
-              headerRight: Settings,
+              headerRight: () => <SettingsButton />,
               headerStyle: styles.header,
               headerTintColor: Palette.LightBlue,
               headerTitleStyle: styles.title,
@@ -70,6 +72,15 @@ export default function App() {
           <Stack.Screen
             name="Map"
             component={Map}
+            options={{
+              headerStyle: styles.header,
+              headerTintColor: Palette.LightBlue,
+              headerTitleStyle: styles.title,
+            }}
+          />
+          <Stack.Screen
+            name="Settings"
+            component={Settings}
             options={{
               headerStyle: styles.header,
               headerTintColor: Palette.LightBlue,

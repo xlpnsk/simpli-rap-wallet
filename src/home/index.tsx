@@ -4,14 +4,13 @@ import { View, StyleSheet } from "react-native";
 import { RootStackParamList } from "../../App";
 import { Palette } from "../../style/palette";
 import { AddButton } from "../components/AddButton";
-import { Nav } from "../Nav";
 
 import { Blob1SVG, Blob2SVG, Blob3SVG } from "../Svgs";
 import Wallet from "../wallet/WalletFlatList";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
-export const Home = ({ navigation }: Props) => {
+const Home = ({ navigation }: Props) => {
   return (
     <View style={styles.container}>
       <Blob1SVG style={styles.blob1} />
@@ -22,6 +21,8 @@ export const Home = ({ navigation }: Props) => {
     </View>
   );
 };
+
+export default Home;
 
 const styles = StyleSheet.create({
   container: {
