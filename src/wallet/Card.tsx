@@ -6,7 +6,12 @@ import {
   View,
   Text,
   Pressable,
+  Modal,
+  ScrollView,
+  SafeAreaView,
 } from "react-native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { opacity } from "react-native-redash";
 import { Palette } from "../../style/palette";
 
 const { width } = Dimensions.get("window");
@@ -77,44 +82,74 @@ const styles = StyleSheet.create({
 
 const Card = ({ navigation }) => {
   let source: number;
+  const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false);
   return (
-    <View style={styles.card} {...{ source }}>
-      <View style={styles.cardInner}>
-        <Text style={styles.shopName}>Shop name</Text>
+    <>
+      <View style={styles.card} {...{ source }}>
+        <View style={styles.cardInner}>
+          <Text style={styles.shopName}>Shop name</Text>
+        </View>
+        <View style={[styles.cardInner]}>
+          <Pressable
+            style={styles.mapContainer}
+            onPress={() => navigation.navigate("Map")}
+          >
+            <View style={styles.innerFrame}></View>
+            <Image
+              source={{
+                uri: "https://i.stack.imgur.com/HILmr.png",
+              }}
+              style={{
+                width: "100%",
+                height: "100%",
+                position: "absolute",
+                top: 0,
+                left: 0,
+              }}
+            />
+          </Pressable>
+          <Pressable
+            style={styles.qrContainer}
+            onPress={() => setIsModalOpen(!isModalOpen)}
+          >
+            <Image
+              source={require("../../assets/qr-sample.png")}
+              style={{
+                width: "100%",
+                height: "100%",
+                position: "absolute",
+                top: 0,
+                left: 0,
+              }}
+            />
+          </Pressable>
+        </View>
       </View>
-      <View style={[styles.cardInner]}>
-        <Pressable
-          style={styles.mapContainer}
-          onPress={() => navigation.navigate("Map")}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isModalOpen}
+        onRequestClose={() => setIsModalOpen(false)}
+      >
+        <View
+          style={{
+            backgroundColor: "red",
+            flex: 1,
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+          }}
         >
-          <View style={styles.innerFrame}></View>
-          <Image
-            source={{
-              uri: "https://i.stack.imgur.com/HILmr.png",
-            }}
-            style={{
-              width: "100%",
-              height: "100%",
-              position: "absolute",
-              top: 0,
-              left: 0,
-            }}
-          />
-        </Pressable>
-        <Pressable style={styles.qrContainer}>
-          <Image
-            source={require("../../assets/qr-sample.png")}
-            style={{
-              width: "100%",
-              height: "100%",
-              position: "absolute",
-              top: 0,
-              left: 0,
-            }}
-          />
-        </Pressable>
-      </View>
-    </View>
+          <Text>Modal</Text>
+        </View>
+      </Modal>
+    </>
   );
 };
 export default Card;
+
+const modalStyles = StyleSheet.create({
+  inner: {
+    backgroundColor: "rgba(0,0,0,0.5)",
+    flex: 1,
+  },
+});

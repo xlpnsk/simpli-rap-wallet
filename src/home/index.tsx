@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
 import { RootStackParamList } from "../../App";
 import { Palette } from "../../style/palette";
 import { AddButton } from "../components/AddButton";
@@ -12,13 +12,15 @@ type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
 const Home = ({ navigation }: Props) => {
   return (
-    <View style={styles.container}>
-      <Blob1SVG style={styles.blob1} />
-      <Blob2SVG style={styles.blob2} />
-      <Blob3SVG style={styles.blob3} />
-      <Wallet navigation={navigation} />
-      <AddButton onPress={() => console.log()} />
-    </View>
+    <>
+      <View style={styles.container}>
+        <Blob1SVG style={styles.blob1} />
+        <Blob2SVG style={styles.blob2} />
+        <Blob3SVG style={styles.blob3} />
+        <Wallet navigation={navigation} />
+        <AddButton onPress={() => console.log("press")} />
+      </View>
+    </>
   );
 };
 
