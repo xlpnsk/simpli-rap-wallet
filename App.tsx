@@ -14,6 +14,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Home from "./src/home";
 import { SettingsSVG } from "./src/Svgs";
 import Settings from "./src/settings";
+import User from "./src/user";
 
 const styles = StyleSheet.create({
   header: {
@@ -87,7 +88,7 @@ export default function App() {
               headerTitleStyle: styles.title,
             }}
           />
-        </Stack.Navigator>
+         </Stack.Navigator>
       </NavigationContainer>
 
       <StatusBar style="auto" />
