@@ -14,6 +14,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Home from "./src/home";
 import { SettingsSVG } from "./src/Svgs";
 import Settings from "./src/settings";
+import RootNavigation from "./src/authnav";
 
 const styles = StyleSheet.create({
   header: {
