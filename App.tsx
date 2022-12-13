@@ -7,10 +7,15 @@ import * as React from "react";
 import { AddButton } from "./src/components/AddButton";
 import { Palette } from "./style/palette";
 import { Blob1SVG, Blob2SVG, Blob3SVG } from "./src/Svgs";
+import BottomSheet from "./src/components/BottomSheet";
+import { Provider } from "react-native-paper";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
+
+  const [openModal, setOpenModal] = React.useState(false);
+
   const [fontsLoaded] = useFonts({
     "Poppins-Regular": require("./assets/fonts/Poppins-Regular.ttf"),
   });
@@ -25,7 +30,16 @@ export default function App() {
     return null;
   }
 
+  const handleModal = () =>{
+    setOpenModal(true);
+  }
+ 
+  const onClose = () =>{
+    setOpenModal(false);
+  }
+
   return (
+    <Provider>
     <View style={styles.container} onLayout={onLayoutRootView}>
       <Nav />
       <Blob1SVG style={styles.blob1} />
@@ -40,9 +54,13 @@ export default function App() {
       >
         Open up App.js to start working on your app!
       </Text>
-      <AddButton onPress={() => console.log()} />
+    
+      <BottomSheet text='My custom modal' buttonText="close" visible={openModal} onClose={onClose}></BottomSheet>
+     
+      <AddButton onPress={handleModal} />
       <StatusBar style="auto" />
     </View>
+    </Provider>
   );
 }
 
