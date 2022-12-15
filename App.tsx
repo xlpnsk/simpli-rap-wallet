@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { Button, StyleSheet, Text, View } from "react-native";
+import { Button, StyleSheet, Text, View, SafeAreaView } from "react-native";
 import { Nav } from "./src/Nav";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
@@ -30,16 +30,9 @@ export default function App() {
     return null;
   }
 
-  const handleModal = () =>{
-    setOpenModal(true);
-  }
- 
-  const onClose = () =>{
-    setOpenModal(false);
-  }
 
   return (
-    <Provider>
+   <Provider>
     <View style={styles.container} onLayout={onLayoutRootView}>
       <Nav />
       <Blob1SVG style={styles.blob1} />
@@ -54,13 +47,23 @@ export default function App() {
       >
         Open up App.js to start working on your app!
       </Text>
-    
-      <BottomSheet text='My custom modal' buttonText="close" visible={openModal} onClose={onClose}></BottomSheet>
-     
-      <AddButton onPress={handleModal} />
+      </View>
+  
+
+   
+        
+        <View>
+      <AddButton onPress={() => {setOpenModal(!openModal)}} />
+      <BottomSheet visible={openModal} onClose={()=>{setOpenModal(false)}}>
+        <View>
+          <Text> test</Text>
+          <Text> test2</Text>
+        </View>
+      </BottomSheet>
       <StatusBar style="auto" />
-    </View>
-    </Provider>
+     </View>
+    
+     </Provider>
   );
 }
 
