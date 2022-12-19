@@ -14,7 +14,8 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Home from "./src/home";
 import { SettingsSVG } from "./src/Svgs";
 import Settings from "./src/settings";
-import RootNavigation from "./src/authnav";
+// import RootNavigation from "./src/authnav";
+import RootNavigation from "./src/stacks";
 import { useAuth } from "./src/hooks/useAuth";
 import { AuthorizedStack } from "./src/stacks/AuthorizedStack";
 import { UnauthorizedStack } from "./src/stacks/UnauthorizedStack";
@@ -45,6 +46,7 @@ export type RootStackParamList = {
 };
 
 export default function App() {
+  const { user } = useAuth();
   const [fontsLoaded] = useFonts({
     "Poppins-Regular": require("./assets/fonts/Poppins-Regular.ttf"),
   });
@@ -58,10 +60,11 @@ export default function App() {
   if (!fontsLoaded) {
     return null;
   }
-  const { user } = useAuth();
+
   return (
     <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
-      {user ? <AuthorizedStack /> : <UnauthorizedStack />}
+      {/* {user ? <AuthorizedStack /> : <UnauthorizedStack />} */}
+      <RootNavigation />
       {/* <NavigationContainer>
         <Stack.Navigator initialRouteName="Home">
           <Stack.Screen

@@ -1,11 +1,19 @@
 import React from "react";
-import { Text, Pressable, Image, View } from "react-native";
+import { Text, Pressable, Image, View, Button } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
 function WelcomeScreen<StackScreenProps>({ navigation }) {
   return (
     <View style={{ backgroundColor: "red" }}>
       <Text style={{ color: "white" }}>Welcome to hell</Text>
+      <Button
+        title="sign in"
+        onPress={() => navigation.navigate("SignIn")}
+      ></Button>
+      <Button
+        title="sign up"
+        onPress={() => navigation.navigate("SignUp")}
+      ></Button>
     </View>
     // <View>
     //   <LinearGradient

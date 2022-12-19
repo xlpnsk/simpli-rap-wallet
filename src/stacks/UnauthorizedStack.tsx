@@ -1,6 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SignInScreen from "../auth/SingIn";
+import SignUpScreen from "../auth/SingUp";
 import WelcomeScreen from "../auth/Welcome";
 
 const Stack = createNativeStackNavigator();
@@ -17,7 +18,7 @@ export const UnauthorizedStack = () => {
       <Stack.Navigator initialRouteName="Welcome">
         <Stack.Screen name="Welcome" component={WelcomeScreen} />
         <Stack.Screen name="SignIn" component={SignInScreen} />
-        <Stack.Screen name="SignUp" component={SignInScreen} />
+        <Stack.Screen name="SignUp" component={SignUpScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
