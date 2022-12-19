@@ -1,53 +1,60 @@
-import React from 'react';
+import React from "react";
 
-import Icon from '@expo/vector-icons/MaterialCommunityIcons'
-import { Image, Pressable, StyleSheet, TextInput, Text, View } from 'react-native';
+import Icon from "@expo/vector-icons/MaterialCommunityIcons";
+import {
+  Image,
+  Pressable,
+  StyleSheet,
+  TextInput,
+  Text,
+  View,
+} from "react-native";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-const auth = getAuth();
+import FirebaseService from "../config/firebase";
 
 function SignUpScreen<StackScreenProps>({ navigation }) {
   const [value, setValue] = React.useState({
-    email: '',
-    password: '',
-    error: ''
-  })
+    email: "",
+    password: "",
+    error: "",
+  });
 
   async function signUp() {
-    if (value.email === '' || value.password === '') {
+    if (value.email === "" || value.password === "") {
       setValue({
         ...value,
-        error: 'Email and password are mandatory.'
-      })
+        error: "Email and password are mandatory.",
+      });
       return;
     }
 
     try {
-      await createUserWithEmailAndPassword(auth, value.email, value.password);
-      navigation.navigate('Sign In');
+      await createUserWithEmailAndPassword(
+        FirebaseService.auth,
+        value.email,
+        value.password
+      );
+      navigation.navigate("Sign In");
     } catch (error) {
       setValue({
         ...value,
         error: error.message,
-      })
+      });
     }
   }
 
   return (
-    <View >
-      <View >
-        
-        <Text >
-          Sign Up
-        </Text>
+    <View>
+      <View>
+        <Text>Sign Up</Text>
 
-        <View  >
-          <View >
-            <View >
+        <View>
+          <View>
+            <View>
               <Icon style={styles.icon} name="email" size={18} color="gray" />
               <TextInput
-                placeholder='Email'
+                placeholder="Email"
                 value={value.email}
-              
                 onChangeText={(text) => setValue({ ...value, email: text })}
               />
             </View>
@@ -61,20 +68,20 @@ function SignUpScreen<StackScreenProps>({ navigation }) {
               />
             </View>
           </View>
-          <Pressable><Text onPress={signUp}>Sign Up</Text></Pressable>
+          <Pressable>
+            <Text onPress={signUp}>Sign Up</Text>
+          </Pressable>
         </View>
-        <Text>Have an account? <Text onPress={() => navigation.navigate('Sign In')}>Sign In</Text></Text>
+        <Text>
+          Have an account?{" "}
+          <Text onPress={() => navigation.navigate("Sign In")}>Sign In</Text>
+        </Text>
       </View>
     </View>
   );
 }
 
 export default SignUpScreen;
-
-
-
-
-
 
 const styles = StyleSheet.create({
   icon: {
@@ -86,7 +93,7 @@ const styles = StyleSheet.create({
     paddingRight: 10,
     paddingBottom: 10,
     paddingLeft: 0,
-    backgroundColor: '#fff',
-    color: '#424242',
+    backgroundColor: "#fff",
+    color: "#424242",
   },
 });

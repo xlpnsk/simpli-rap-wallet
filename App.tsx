@@ -15,6 +15,9 @@ import Home from "./src/home";
 import { SettingsSVG } from "./src/Svgs";
 import Settings from "./src/settings";
 import RootNavigation from "./src/authnav";
+import { useAuth } from "./src/hooks/useAuth";
+import { AuthorizedStack } from "./src/stacks/AuthorizedStack";
+import { UnauthorizedStack } from "./src/stacks/UnauthorizedStack";
 
 const styles = StyleSheet.create({
   header: {
@@ -55,9 +58,11 @@ export default function App() {
   if (!fontsLoaded) {
     return null;
   }
+  const { user } = useAuth();
   return (
     <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
-      <NavigationContainer>
+      {user ? <AuthorizedStack /> : <UnauthorizedStack />}
+      {/* <NavigationContainer>
         <Stack.Navigator initialRouteName="Home">
           <Stack.Screen
             name="Home"
@@ -89,7 +94,7 @@ export default function App() {
             }}
           />
         </Stack.Navigator>
-      </NavigationContainer>
+      </NavigationContainer> */}
 
       <StatusBar style="auto" />
     </View>
