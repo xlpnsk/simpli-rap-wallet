@@ -11,6 +11,8 @@ import {
 } from "react-native";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import FirebaseService from "../config/firebase";
+import { SimpleInput } from "../components/SimpleInput";
+import { Button } from "../components/Button";
 
 function SignUpScreen<StackScreenProps>({ navigation }) {
   const [value, setValue] = React.useState({
@@ -49,28 +51,24 @@ function SignUpScreen<StackScreenProps>({ navigation }) {
         <Text>Sign Up</Text>
 
         <View>
-          <View>
-            <View>
-              <Icon style={styles.icon} name="email" size={18} color="gray" />
-              <TextInput
-                placeholder="Email"
-                value={value.email}
-                onChangeText={(text) => setValue({ ...value, email: text })}
-              />
-            </View>
+          <SimpleInput
+            icon={
+              <Icon style={styles.icon} name="email" size={18} color="white" />
+            }
+            placeholder="Email"
+            value={value.email}
+            onChangeText={(text) => setValue({ ...value, email: text })}
+          />
+          <SimpleInput
+            icon={
+              <Icon style={styles.icon} name="lock" size={18} color="white" />
+            }
+            placeholder="Password"
+            onChangeText={(text) => setValue({ ...value, password: text })}
+            secureTextEntry={true}
+          />
 
-            <View>
-              <Icon style={styles.icon} name="lock" size={18} color="gray" />
-              <TextInput
-                placeholder="Password"
-                onChangeText={(text) => setValue({ ...value, password: text })}
-                secureTextEntry={true}
-              />
-            </View>
-          </View>
-          <Pressable>
-            <Text onPress={signUp}>Sign Up</Text>
-          </Pressable>
+          <Button onPress={signUp}>Sign Up</Button>
         </View>
         <Text>
           Have an account?{" "}

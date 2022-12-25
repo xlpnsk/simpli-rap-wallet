@@ -46,7 +46,6 @@ export type RootStackParamList = {
 };
 
 export default function App() {
-  const { user } = useAuth();
   const [fontsLoaded] = useFonts({
     "Poppins-Regular": require("./assets/fonts/Poppins-Regular.ttf"),
   });

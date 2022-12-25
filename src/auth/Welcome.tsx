@@ -1,46 +1,59 @@
 import React from "react";
-import { Text, Pressable, Image, View, Button } from "react-native";
+import { Text, Pressable, Image, View, StyleSheet } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import { Button } from "../components/Button";
+
+const styles = StyleSheet.create({
+  entranceText: {
+    color: "#ffffff",
+    fontFamily: "Poppins-Regular",
+    fontSize: 26,
+    fontWeight: "600",
+    textAlign: "center",
+  },
+  space: {
+    marginBottom: 20,
+  },
+  icon: {
+    width: 220,
+    height: 220,
+    alignSelf: "center",
+  },
+});
 
 function WelcomeScreen<StackScreenProps>({ navigation }) {
   return (
-    <View style={{ backgroundColor: "red" }}>
-      <Text style={{ color: "white" }}>Welcome to hell</Text>
-      <Button
-        title="sign in"
-        onPress={() => navigation.navigate("SignIn")}
-      ></Button>
-      <Button
-        title="sign up"
-        onPress={() => navigation.navigate("SignUp")}
-      ></Button>
+    <View style={{ flex: 1 }}>
+      <LinearGradient
+        colors={["#2B4570", "#06090F"]}
+        style={{
+          flex: 1,
+          alignItems: "stretch",
+          justifyContent: "center",
+          padding: 20,
+        }}
+      >
+        <Image
+          source={require("../../assets/welcome.png")}
+          style={styles.icon}
+        />
+        <Text style={[styles.entranceText, styles.space]}>
+          Welcome to {"\n"} Simpli RAP Wallet
+        </Text>
+        <Button
+          onPress={() => navigation.navigate("SignIn")}
+          style={styles.space}
+        >
+          Sign In
+        </Button>
+        <Button
+          onPress={() => navigation.navigate("SignUp")}
+          style={styles.space}
+        >
+          Sign Up
+        </Button>
+      </LinearGradient>
     </View>
-    // <View>
-    //   <LinearGradient
-    //     colors={["#141e30", "#243b55"]}
-    //     style={{ flex: 1, borderRadius: 20 }}
-    //   >
-    //     <View>
-    //       <Text>Keep all you client conversations in one place</Text>
-    //       <Text>
-    //         At legal call we allow you to contact your clients through voice and
-    //         text without giving out your phone number
-    //       </Text>
-    //       <View>
-    //         <Pressable>
-    //           <Text onPress={() => navigation.navigate("Sign In")}>
-    //             Sign In
-    //           </Text>
-    //         </Pressable>
-    //         <Pressable>
-    //           <Text onPress={() => navigation.navigate("Sign Up")}>
-    //             Sign Up
-    //           </Text>
-    //         </Pressable>
-    //       </View>
-    //     </View>
-    //   </LinearGradient>
-    // </View>
   );
 }
 

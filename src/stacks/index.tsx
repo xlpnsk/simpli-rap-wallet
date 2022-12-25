@@ -5,5 +5,5 @@ import { UnauthorizedStack } from "./UnauthorizedStack";
 export default function RootNavigation() {
   const { user } = useAuth();
 
-  return user ? <AuthorizedStack /> : <UnauthorizedStack />;
+  return !user ? <AuthorizedStack /> : <UnauthorizedStack />;
 }

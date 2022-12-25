@@ -11,6 +11,8 @@ import {
 //import Icon from 'react-native-vector-icons/FontAwesome';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import FirebaseService from "../config/firebase";
+import { SimpleInput } from "../components/SimpleInput";
+import { Button } from "../components/Button";
 
 function SignInScreen<StackScreenProps>({ navigation }) {
   const [value, setValue] = React.useState({
@@ -46,30 +48,31 @@ function SignInScreen<StackScreenProps>({ navigation }) {
     <View>
       <View>
         <Text>Sign In</Text>
-
         <View>
           <View>
-            <View>
-              <Icon style={styles.icon} name="email" size={18} color="gray" />
-              <TextInput
-                placeholder="Email"
-                value={value.email}
-                onChangeText={(text) => setValue({ ...value, email: text })}
-              />
-            </View>
-
-            <View>
-              <Icon style={styles.icon} name="lock" size={18} color="gray" />
-              <TextInput
-                placeholder="Password"
-                onChangeText={(text) => setValue({ ...value, password: text })}
-                secureTextEntry={true}
-              />
-            </View>
+            <SimpleInput
+              icon={
+                <Icon
+                  style={styles.icon}
+                  name="email"
+                  size={18}
+                  color="white"
+                />
+              }
+              placeholder="Email"
+              value={value.email}
+              onChangeText={(text) => setValue({ ...value, email: text })}
+            />
+            <SimpleInput
+              icon={
+                <Icon style={styles.icon} name="lock" size={18} color="white" />
+              }
+              placeholder="Password"
+              onChangeText={(text) => setValue({ ...value, password: text })}
+              secureTextEntry={true}
+            />
           </View>
-          <Pressable>
-            <Text onPress={signIn}>Sign In</Text>
-          </Pressable>
+          <Button onPress={signIn}>Sign In</Button>
         </View>
         <Text>
           Don't Have an account?{" "}
