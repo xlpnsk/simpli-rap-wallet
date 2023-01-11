@@ -6,6 +6,7 @@ import {
   StyleProp,
   StyleSheet,
   Text,
+  TextStyle,
   ViewStyle,
 } from "react-native";
 import { Palette } from "../../style/palette";
@@ -31,12 +32,18 @@ interface IButton {
   onPress: (event: GestureResponderEvent) => void;
   children?: string;
   style?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
 }
 
-export const Button: React.FC<IButton> = ({ onPress, children, style }) => {
+export const Button: React.FC<IButton> = ({
+  onPress,
+  children,
+  style,
+  textStyle,
+}) => {
   return (
     <Pressable onPress={onPress} style={[styles.button, style]}>
-      <Text style={styles.buttonText}>{children}</Text>
+      <Text style={[styles.buttonText, textStyle]}>{children}</Text>
     </Pressable>
   );
 };

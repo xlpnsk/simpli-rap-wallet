@@ -1,5 +1,12 @@
 import * as React from "react";
-import { TextInput, View, StyleSheet, Text } from "react-native";
+import {
+  TextInput,
+  View,
+  StyleSheet,
+  Text,
+  ViewStyle,
+  StyleProp,
+} from "react-native";
 import { Palette } from "../../style/palette";
 
 const styles = StyleSheet.create({
@@ -7,6 +14,7 @@ const styles = StyleSheet.create({
     backgroundColor: Palette.DarkBlue,
     borderRadius: 30,
     flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 10,
     paddingVertical: 10,
   },
@@ -44,6 +52,7 @@ interface ISimpleInput {
   placeholder: string;
   icon?: React.ReactNode;
   secureTextEntry?: boolean;
+  style?: StyleProp<ViewStyle>;
 }
 export const SimpleInput: React.FC<ISimpleInput> = ({
   value,
@@ -51,9 +60,10 @@ export const SimpleInput: React.FC<ISimpleInput> = ({
   onChangeText,
   icon,
   secureTextEntry,
+  style,
 }) => {
   return (
-    <View style={styles.inputWrapper}>
+    <View style={[styles.inputWrapper, style]}>
       {icon}
       <View style={styles.placeholder}>
         <Text style={styles.placeholderText}>{placeholder}</Text>

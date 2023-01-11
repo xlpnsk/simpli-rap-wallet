@@ -13,6 +13,7 @@ import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import FirebaseService from "../config/firebase";
 import { SimpleInput } from "../components/SimpleInput";
 import { Button } from "../components/Button";
+import { Palette } from "../../style/palette";
 
 function SignInScreen<StackScreenProps>({ navigation }) {
   const [value, setValue] = React.useState({
@@ -45,39 +46,38 @@ function SignInScreen<StackScreenProps>({ navigation }) {
   }
 
   return (
-    <View>
+    <View style={styles.formContainer}>
+      <Text style={[styles.header, styles.marginBottom]}>Sign In</Text>
+      <View style={styles.inputContainer}>
+        <SimpleInput
+          icon={
+            <Icon style={styles.icon} name="email" size={18} color="white" />
+          }
+          placeholder="Email"
+          value={value.email}
+          style={styles.marginBottom}
+          onChangeText={(text) => setValue({ ...value, email: text })}
+        />
+        <SimpleInput
+          icon={
+            <Icon style={styles.icon} name="lock" size={18} color="white" />
+          }
+          placeholder="Password"
+          style={styles.marginBottom}
+          onChangeText={(text) => setValue({ ...value, password: text })}
+          secureTextEntry={true}
+        />
+        <Button onPress={signIn}>Sign In</Button>
+      </View>
       <View>
-        <Text>Sign In</Text>
-        <View>
-          <View>
-            <SimpleInput
-              icon={
-                <Icon
-                  style={styles.icon}
-                  name="email"
-                  size={18}
-                  color="white"
-                />
-              }
-              placeholder="Email"
-              value={value.email}
-              onChangeText={(text) => setValue({ ...value, email: text })}
-            />
-            <SimpleInput
-              icon={
-                <Icon style={styles.icon} name="lock" size={18} color="white" />
-              }
-              placeholder="Password"
-              onChangeText={(text) => setValue({ ...value, password: text })}
-              secureTextEntry={true}
-            />
-          </View>
-          <Button onPress={signIn}>Sign In</Button>
-        </View>
-        <Text>
-          Don't Have an account?{" "}
-          <Text onPress={() => navigation.navigate("Sign Up")}>Sign Up</Text>
-        </Text>
+        <Text>Don't Have an account?</Text>
+        <Button
+          style={{ backgroundColor: Palette.DarkBlue }}
+          textStyle={{ color: Palette.LightBlue }}
+          onPress={() => null}
+        >
+          Sign Up
+        </Button>
       </View>
     </View>
   );
@@ -86,16 +86,22 @@ function SignInScreen<StackScreenProps>({ navigation }) {
 export default SignInScreen;
 
 const styles = StyleSheet.create({
+  formContainer: {
+    flex: 1,
+    padding: 20,
+  },
+  header: {
+    fontFamily: "Poppins-Regular",
+    fontWeight: "700",
+    fontSize: 26,
+    letterSpacing: 0.06,
+    textAlign: "center",
+  },
   icon: {
     padding: 10,
   },
-  input: {
-    flex: 1,
-    paddingTop: 10,
-    paddingRight: 10,
-    paddingBottom: 10,
-    paddingLeft: 0,
-    backgroundColor: "#fff",
-    color: "#424242",
+  marginBottom: {
+    marginBottom: 15,
   },
+  inputContainer: {},
 });
