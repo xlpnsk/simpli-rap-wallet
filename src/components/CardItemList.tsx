@@ -11,7 +11,7 @@ const CardItemList = () =>{
         <View>
             {data.map((item) =>{
                 return(
-                    <CardItem key={item.id} data={item.name}/>
+                    <CardItem key={item.id} id={item.id} data={item.name}/>
                 );
             })}
             {/* <CardItem data={data}/> */}

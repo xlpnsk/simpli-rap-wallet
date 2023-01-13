@@ -95,3 +95,31 @@ export const Blob3SVG = (props: SvgProps) => (
     />
   </Svg>
 );
+
+export const AddCardSVG = (props:SvgProps) => {
+  return (
+    <Svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="30"
+      height="30"
+      fill="none"
+      viewBox="0 0 30 30"
+    >
+      <Path
+        stroke="#955F90"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.5"
+        d="M15 26.562c6.385 0 11.563-5.176 11.563-11.562 0-6.385-5.178-11.563-11.563-11.563C8.615 3.437 3.437 8.615 3.437 15c0 6.386 5.178 11.562 11.563 11.562z"
+        clipRule="evenodd"
+      ></Path>
+      <Path
+        stroke="#955F90"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.5"
+        d="M13.197 19.339L17.555 15l-4.358-4.339"
+      ></Path>
+    </Svg>
+  );
+}
