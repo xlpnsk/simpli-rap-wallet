@@ -7,8 +7,9 @@ import * as React from "react";
 import { AddButton } from "./src/components/AddButton";
 import { Palette } from "./style/palette";
 import { Blob1SVG, Blob2SVG, Blob3SVG } from "./src/Svgs";
-import BottomSheet from "./src/components/BottomSheet";
+import BottomSheetContent from "./src/components/BottomSheetContent";
 import { Provider } from "react-native-paper";
+import CardItemList from "./src/components/CardItemList";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -53,13 +54,12 @@ export default function App() {
    
         
         <View>
-      <AddButton onPress={() => {setOpenModal(!openModal)}} />
-      <BottomSheet visible={openModal} onClose={()=>{setOpenModal(false)}}>
+      <AddButton onPress={() => {setOpenModal(true)}} />
+      <BottomSheetContent visible={openModal} onClose={(p)=>{setOpenModal(p)}}>
         <View>
-          <Text> test</Text>
-          <Text> test2</Text>
+          <CardItemList/>
         </View>
-      </BottomSheet>
+      </BottomSheetContent>
       <StatusBar style="auto" />
      </View>
     
