@@ -87,15 +87,16 @@ const BottomSheetContent = (props:BottomSheetContentProps) => {
 const styles = StyleSheet.create({
     modal: {
         flex: 1,
+        position:"absolute",
+        bottom:0,
     },
     bottomSheet: {
-        flex:1,
+       
     },
     dummy: {
-        flex:1,
+
     },
     bottomSheetContent: {
-        
         
         borderTopLeftRadius: 50,
         borderTopRightRadius: 50,
@@ -115,7 +116,9 @@ const styles = StyleSheet.create({
         textAlign:"center",
         fontSize:14,
     },
-    children:{},
+    children:{
+        paddingBottom:50
+    },
 
 });
 
