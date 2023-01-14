@@ -10,6 +10,7 @@ import { Blob1SVG, Blob2SVG, Blob3SVG } from "./src/Svgs";
 import BottomSheetContent from "./src/components/BottomSheetContent";
 import { Provider } from "react-native-paper";
 import CardItemList from "./src/components/CardItemList";
+import AddCardModal from "./src/components/AddCardModal";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -60,6 +61,8 @@ export default function App() {
           <CardItemList/>
         </View>
       </BottomSheetContent>
+      <AddCardModal text={"Add a new card"} buttonText={"Proceed"} onClose={()=>{console.log("formularz")}}/>
+
       <StatusBar style="auto" />
      </View>
     

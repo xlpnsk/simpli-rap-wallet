@@ -123,3 +123,28 @@ export const AddCardSVG = (props:SvgProps) => {
     </Svg>
   );
 }
+
+export const AparatIcon = (props:SvgProps) => {
+  return (
+    <Svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="27"
+      height="27"
+      fill="none"
+      viewBox="0 0 21 21"
+    >
+      <G clipPath="url(#clip0_10_53)">
+        <Path
+          fill="#FFF2F2"
+          d="M8.6 4.375l-1.75 1.75H3.5v10.5h14v-10.5h-3.35l-1.75-1.75H8.6zm-.725-1.75h5.25l1.75 1.75h3.5a.875.875 0 01.875.875V17.5a.875.875 0 01-.875.875H2.625a.875.875 0 01-.875-.875V5.25a.875.875 0 01.875-.875h3.5l1.75-1.75zM10.5 15.75a4.813 4.813 0 110-9.625 4.813 4.813 0 010 9.625zm0-1.75a3.063 3.063 0 100-6.125 3.063 3.063 0 000 6.125z"
+        ></Path>
+      </G>
+      <Defs>
+        <ClipPath id="clip0_10_53">
+          <Path fill="#fff" d="M0 0H21V21H0z"></Path>
+        </ClipPath>
+      </Defs>
+    </Svg>
+  );
+
+}

@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
         fontSize:14,
     },
     children:{
-        paddingBottom:50
+        paddingBottom:40
     },
 
 });
