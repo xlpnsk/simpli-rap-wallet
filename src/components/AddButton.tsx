@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { Pressable, StyleSheet, PressableProps } from "react-native";
 import { Palette } from "../../style/palette";
 import { PlusSVG } from "../Svgs";

@@ -1,3 +1,4 @@
+import * as React from "react";
 import { View, StyleSheet, Text, Pressable } from "react-native";
 import Constants from "expo-constants";
 import { Palette } from "../style/palette";
@@ -54,7 +55,7 @@ export const SettingsButton = () => {
   return (
     <Pressable
       style={styles.settings}
-      onPress={() => navigation.dispatch(CommonActions.navigate("Settings"))}
+      onPress={() => navigation.dispatch(CommonActions.navigate("Account"))}
     >
       <SettingsSVG />
     </Pressable>

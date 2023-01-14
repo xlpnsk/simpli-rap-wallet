@@ -1,19 +1,18 @@
+import "react-native-url-polyfill/auto";
 import { StatusBar } from "expo-status-bar";
-import { Button, StyleSheet, Text, View } from "react-native";
-import { Nav, SettingsButton } from "./src/Nav";
+import { StyleSheet, View } from "react-native";
+import { SettingsButton } from "./src/Nav";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import * as React from "react";
-import { AddButton } from "./src/components/AddButton";
 import { Palette } from "./style/palette";
 
 import Map from "./src/map";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import Home from "./src/home";
-import { SettingsSVG } from "./src/Svgs";
 import Settings from "./src/settings";
+import RootNavigation from "./src/root";
 
 const styles = StyleSheet.create({
   header: {
@@ -54,6 +53,11 @@ export default function App() {
   if (!fontsLoaded) {
     return null;
   }
+  return (
+    <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+      <RootNavigation />
+    </View>
+  );
   return (
     <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
       <NavigationContainer>
