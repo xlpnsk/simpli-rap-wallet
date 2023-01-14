@@ -2,7 +2,7 @@ import {View,Text,StyleSheet,Modal,Button,TextInput, Pressable} from "react-nati
 import * as React from "react";
 import { SimpleInput } from "./SimpleInput";
 import { Palette } from "../../style/palette";
-import { AparatIcon } from "../Svgs";
+import { AparatIcon, ArrowIcon } from "../Svgs";
 
 
 
@@ -10,12 +10,13 @@ interface AddCardModalProps {
     text: string;
     buttonText:string;
     onClose: () => void;
+    visible:boolean;
+    shopData:string;
 }
 
 const AddCardModal = (props:AddCardModalProps) => {
 
-    const {text, buttonText, onClose} = props;
-    const [isModalOpen, setIsModalOpen] = React.useState(true)
+    const {text, buttonText, onClose,visible,shopData} = props;
     const [shopName, setShopName] = React.useState('');
     const [cardNumber, setCardNumber] = React.useState('');
     const [shopURL, setShopURL] = React.useState('');
@@ -27,16 +28,28 @@ const AddCardModal = (props:AddCardModalProps) => {
 
     function testicon(){
         console.log("icon click");
+        console.log(shopData);
     }
 return(
 
-    <Modal visible={true} transparent={true} >
+    <Modal visible={visible} transparent={true} >
         <View style={styles.modal}>
             <View style={styles.modalContentWrapper}>
                 <View style={styles.modalContent}>
-                    <Text style={styles.header}>
+                    <View style={styles.header}>
+                    <View style={styles.arrowIcon}>
+                        <Pressable onPress={()=>{onClose()}}>
+                             <ArrowIcon/>
+                             </Pressable>
+                   
+                    </View>
+                   
+                    <Text style={styles.headerText}>
                         {text}
                     </Text>
+                    </View>
+                    
+                    
                     <View style={styles.inputs}>
                     <SimpleInput onChangeText={setShopName} placeholder={"Shop name"} value={shopName} style={styles.input} inputTitle={"Shop name"}/>
                     <View style={styles.middleInput}>
@@ -72,7 +85,7 @@ return(
                     placeholder={"https://..."}
                     /> */}
                     </View>
-                    <Pressable onPress={() => {test()}} style={styles.button}>
+                    <Pressable onPress={() => {console.log("jakies dane")}} style={styles.button}>
                         <Text style={styles.buttonText}>
                             {buttonText}
                         </Text>
@@ -110,11 +123,18 @@ const styles = StyleSheet.create({
 
     },
     header:{
+        width:"100%",
+        flex:1,
+        flexDirection:"row",
+        justifyContent:"center",
+        marginBottom:30,
+
+    },
+    headerText:{
+       
         textAlign:"center",
         fontSize:22,
         fontWeight:"600",
-        marginBottom:30
-
     },
     inputs:{
         height:330,
@@ -166,6 +186,11 @@ const styles = StyleSheet.create({
         fontSize:20,
         fontWeight:"500",
         paddingHorizontal:10
+    },
+    arrowIcon:{
+        position:"absolute",
+        left:10,
+        top:10
     },
 })
 

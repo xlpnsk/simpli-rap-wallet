@@ -11,7 +11,7 @@ interface BottomSheetContentProps {
 
 const BottomSheetContent = (props:BottomSheetContentProps) => {
 
-    const {visible, onClose,children} = props;
+    const {visible, onClose, children} = props;
     const height = React.useRef(new Animated.Value(0)).current  // Initial value for opacity: 0
     
     function onModalShow(){

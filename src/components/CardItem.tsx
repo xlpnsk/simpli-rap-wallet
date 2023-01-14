@@ -6,12 +6,13 @@ import { AddCardSVG } from "../Svgs";
 interface CardItemProps{
     id: string,
     data: string,
+    handleForm: (open:boolean, shopID:string) => void;
 }
 
 const CardItem = (props:CardItemProps) =>{
-
+    const {id,handleForm,data} = props;
 function testButtons(){
-
+   
     console.log(props.id)
 
 }
@@ -28,13 +29,13 @@ function testButtons(){
                 </View>
                 <View style={styles.cardContent}>
                     <Text>
-                        {/* {props.id} */}
-                        {props.data}
+                        {/* {.id} */}
+                        {data}
                      </Text>
                 </View>
                 </View>
                 <View style={styles.cardButton}>
-                    <Pressable  onPress={() => {testButtons()}}>
+                    <Pressable  onPress={() => {handleForm(true,id)}}>
                     <AddCardSVG />
                     </Pressable>
                     

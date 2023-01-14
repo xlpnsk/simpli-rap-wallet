@@ -17,6 +17,8 @@ SplashScreen.preventAutoHideAsync();
 export default function App() {
 
   const [openModal, setOpenModal] = React.useState(false);
+  const [openCardForm, setOpenCardForm] = React.useState(false);
+  const [shopData, setShopData] = React.useState('');
 
   const [fontsLoaded] = useFonts({
     "Poppins-Regular": require("./assets/fonts/Poppins-Regular.ttf"),
@@ -30,6 +32,12 @@ export default function App() {
 
   if (!fontsLoaded) {
     return null;
+  }
+
+  function openModalAndPassShopId(one:boolean, two:string){
+
+    setOpenCardForm(one);
+    setShopData(two);
   }
 
 
@@ -56,12 +64,12 @@ export default function App() {
         
         <View>
       <AddButton onPress={() => {setOpenModal(true)}} />
-      <BottomSheetContent visible={openModal} onClose={(p)=>{setOpenModal(p)}}>
+      <BottomSheetContent visible={openModal} onClose={(p)=>{setOpenModal(p)}} >
         <View>
-          <CardItemList/>
+          <CardItemList cardHandler={(open, shopID) => {openModalAndPassShopId(open,shopID)}}/>
         </View>
       </BottomSheetContent>
-      <AddCardModal text={"Add a new card"} buttonText={"Proceed"} onClose={()=>{console.log("formularz")}}/>
+      <AddCardModal visible={openCardForm} text={"Add a new card"} buttonText={"Proceed"} onClose={()=>{setOpenCardForm(false)}} shopData={shopData}/>
 
       <StatusBar style="auto" />
      </View>
