@@ -1,4 +1,4 @@
-import {View,Text,StyleSheet,Modal,Button,TextInput, Pressable} from "react-native"
+import {View,Text,StyleSheet,Modal,Button,TextInput, Pressable,Animated} from "react-native"
 import * as React from "react";
 import { SimpleInput } from "./SimpleInput";
 import { Palette } from "../../style/palette";
@@ -20,15 +20,60 @@ const AddCardModal = (props:AddCardModalProps) => {
     const [shopName, setShopName] = React.useState('');
     const [cardNumber, setCardNumber] = React.useState('');
     const [shopURL, setShopURL] = React.useState('');
+    const [isValidShopName, setIsValidShopName] = React.useState(false);
+    const [isValidCardNumber, setIsValidCardNumber] = React.useState(false);
+    const [isValidShopURL, setIsValidShopURL] = React.useState(false);
 
-    function test(){
 
-      console.log(shopName,cardNumber,shopURL);
+    const shopNameChange = (val:string)=>{ 
+        if(val.trim().length >= 4){
+            setShopName(val);
+            setIsValidShopName(true);
+        }else{
+            setShopName(val);
+            setIsValidShopName(false);
+        }
     }
 
-    function testicon(){
-        console.log("icon click");
-        console.log(shopData);
+    const cardNumberChange = (val:string)=>{ 
+        if(val.trim().length >= 4){
+            setCardNumber(val);
+            setIsValidCardNumber(true);
+        }else{
+            setCardNumber(val);
+            setIsValidCardNumber(false);
+        }
+    }
+    const shopURLChange = (val:string)=>{ 
+        if(val.trim().length >= 4){
+            setShopURL(val);
+            setIsValidShopURL(true);
+        }else{
+            setShopURL(val);
+            setIsValidShopURL(false);
+        }
+    }
+
+    const clearData = () => {
+        setShopName('');
+        setCardNumber('');
+        setShopURL('');
+        setIsValidCardNumber(false);
+        setIsValidShopName(false);
+        setIsValidShopURL(false);
+        onClose();
+    }
+
+    const handleForm = () =>{
+        if(isValidShopName && isValidCardNumber && isValidShopURL === true){
+            console.log(shopData,shopName,cardNumber,shopURL);
+
+        }else {
+            console.log(isValidShopName);
+            console.log(isValidCardNumber);
+            console.log(isValidShopURL)
+            console.log("Bad data")
+        }
     }
 return(
 
@@ -38,7 +83,7 @@ return(
                 <View style={styles.modalContent}>
                     <View style={styles.header}>
                     <View style={styles.arrowIcon}>
-                        <Pressable onPress={()=>{onClose()}}>
+                        <Pressable onPress={()=>{clearData()}}>
                              <ArrowIcon/>
                              </Pressable>
                    
@@ -51,41 +96,28 @@ return(
                     
                     
                     <View style={styles.inputs}>
-                    <SimpleInput onChangeText={setShopName} placeholder={"Shop name"} value={shopName} style={styles.input} inputTitle={"Shop name"}/>
+                    <SimpleInput onChangeText={(val) => {shopNameChange(val)}} placeholder={"Shop name"} value={shopName} style={styles.input} inputTitle={"Shop name"}/>
+                    {isValidShopName? null : <Animated.View>
+                        <Text style={styles.errorText}>Shop name needs to be at least 4 characters long</Text>
+                    </Animated.View>}
                     <View style={styles.middleInput}>
-                    <SimpleInput onChangeText={setCardNumber} placeholder={"156829..."} value={cardNumber} style={styles.input} inputTitle={"Card number"}/>
+                    <SimpleInput onChangeText={(val) => {cardNumberChange(val)}} placeholder={"156829..."} value={cardNumber} style={styles.input} inputTitle={"Card number"} keyboardType={"numeric"}/>
                     <View style={styles.aparatCircle}>
-                    <Pressable style={styles.aparatIcon} onPress={() => {testicon()}}>
+                    <Pressable style={styles.aparatIcon} onPress={() => {console.log("icon click")}}>
                         <AparatIcon />
                     </Pressable>
                     </View>
-
-                    </View>
                     
-                    <SimpleInput onChangeText={setShopURL} placeholder={"https://"} value={shopURL} style={styles.input} inputTitle={"Shop URL"}/>
-                    
-                    {/* <Text style={styles.inputLabel}>Shop name</Text>
-                    <TextInput style={styles.input}
-                    onChangeText={setShopName}
-                    value={shopName}
-                    placeholder={"Shop name"}
-                    />
-
-                    <Text style={styles.inputLabel}>Card number</Text>
-                    <TextInput style={styles.input}
-                    onChangeText={setCardNumber}
-                    value={cardNumber}
-                    placeholder={"1568429..."}
-                    />
-
-                    <Text style={styles.inputLabel}>Shop URL</Text>
-                    <TextInput style={styles.input}
-                    onChangeText={setShopURL}
-                    value={shopURL}
-                    placeholder={"https://..."}
-                    /> */}
                     </View>
-                    <Pressable onPress={() => {console.log("jakies dane")}} style={styles.button}>
+                    {isValidCardNumber? null : <Animated.View>
+                        <Text style={styles.errorText}>Card number must consist of up to 9 numebers</Text>
+                    </Animated.View>}
+                    <SimpleInput onChangeText={(val) =>{shopURLChange(val)}} placeholder={"https://"} value={shopURL} style={styles.input} inputTitle={"Shop URL"} keyboardType={"url"}/>
+                    {isValidShopURL? null : <Animated.View>
+                        <Text style={styles.errorText}>Shop URL must be a URL</Text>
+                    </Animated.View>}
+                    </View>
+                    <Pressable onPress={() => {handleForm()}} style={styles.button}>
                         <Text style={styles.buttonText}>
                             {buttonText}
                         </Text>
@@ -127,7 +159,7 @@ const styles = StyleSheet.create({
         flex:1,
         flexDirection:"row",
         justifyContent:"center",
-        marginBottom:30,
+        marginBottom:50,
 
     },
     headerText:{
@@ -138,11 +170,11 @@ const styles = StyleSheet.create({
     },
     inputs:{
         height:330,
-        width:"95%"
+        width:"95%",
     },
     input:{
         borderRadius:40,
-        marginBottom:35,
+        marginTop:15,
         height:70,
         backgroundColor:"rgba(43,69,112,0.85)",
         color:Palette.LightBlue,
@@ -155,7 +187,7 @@ const styles = StyleSheet.create({
     },
     aparatCircle:{
         position:"absolute",
-        top:10,
+        top:25,
         right:15,
         backgroundColor:Palette.Fuchsia,
         borderRadius:25,
@@ -191,6 +223,10 @@ const styles = StyleSheet.create({
         position:"absolute",
         left:10,
         top:10
+    },
+    errorText:{
+        color:"red",
+        fontSize:11,
     },
 })
 
