@@ -10,7 +10,7 @@ import Wallet from "../wallet/WalletFlatList";
 
 import BottomSheetContent from "../components/BottomSheetContent";
 import { Provider } from "react-native-paper";
-import CardItemList from "../components/CardItemList";
+import CardItemList, { IShopData } from "../components/CardItemList";
 import AddCardModal from "../components/AddCardModal";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
@@ -18,10 +18,10 @@ type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 const Home = ({ navigation }: Props) => {
   const [openModal, setOpenModal] = React.useState(false);
   const [openCardForm, setOpenCardForm] = React.useState(false);
-  const [shopData, setShopData] = React.useState("");
-  function openModalAndPassShopId(one: boolean, two: string) {
-    setOpenCardForm(one);
-    setShopData(two);
+  const [shopData, setShopData] = React.useState<IShopData | null>(null);
+  function openModalAndPassShopId(isFormOpen: boolean, shopData: IShopData) {
+    setOpenCardForm(isFormOpen);
+    setShopData(shopData);
   }
 
   return (
