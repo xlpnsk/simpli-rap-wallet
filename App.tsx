@@ -1,37 +1,14 @@
 import "react-native-url-polyfill/auto";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View } from "react-native";
-import { SettingsButton } from "./src/Nav";
+
+import { View } from "react-native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import * as React from "react";
-import { Palette } from "./style/palette";
 
-import Map from "./src/map";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Home from "./src/home";
-import Settings from "./src/settings";
 import RootNavigation from "./src/root";
 
-const styles = StyleSheet.create({
-  header: {
-    backgroundColor: Palette.DarkBlue,
-    alignItems: "center",
-    overflow: "hidden",
-  },
-  title: {
-    fontFamily: "Poppins-Regular",
-    fontWeight: "900",
-    color: Palette.LightBlue,
-    fontSize: 16,
-    lineHeight: 24,
-  },
-});
-
 SplashScreen.preventAutoHideAsync();
-
-const Stack = createNativeStackNavigator();
 
 export type RootStackParamList = {
   Home: undefined;
@@ -40,6 +17,7 @@ export type RootStackParamList = {
 };
 
 export default function App() {
+
   const [fontsLoaded] = useFonts({
     "Poppins-Regular": require("./assets/fonts/Poppins-Regular.ttf"),
   });
@@ -53,48 +31,13 @@ export default function App() {
   if (!fontsLoaded) {
     return null;
   }
+
+
+
   return (
     <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
       <RootNavigation />
     </View>
   );
-  return (
-    <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home">
-          <Stack.Screen
-            name="Home"
-            component={Home}
-            options={{
-              headerRight: () => <SettingsButton />,
-              headerStyle: styles.header,
-              headerTintColor: Palette.LightBlue,
-              headerTitleStyle: styles.title,
-              title: "simpli-RAP-wallet",
-            }}
-          />
-          <Stack.Screen
-            name="Map"
-            component={Map}
-            options={{
-              headerStyle: styles.header,
-              headerTintColor: Palette.LightBlue,
-              headerTitleStyle: styles.title,
-            }}
-          />
-          <Stack.Screen
-            name="Settings"
-            component={Settings}
-            options={{
-              headerStyle: styles.header,
-              headerTintColor: Palette.LightBlue,
-              headerTitleStyle: styles.title,
-            }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
 
-      <StatusBar style="auto" />
-    </View>
-  );
 }
