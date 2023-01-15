@@ -11,6 +11,63 @@ const defRegion = {
   longitudeDelta: 0.0421,
 };
 
+const getSearchEndpoint = (shopName: string, bbox: string) => {
+  switch (shopName) {
+    case "Żabka":
+      return `https://overpass-api.de/api/interpreter?data=
+      [out:json][timeout:25];(
+        node[brand:wikidata=Q2589061][shop=convenience](bbox);
+        way[brand:wikidata=Q2589061][shop=convenience](bbox);
+        relation[brand:wikidata=Q2589061][shop=convenience](bbox);
+      );
+      out;
+      >;
+      out skel qt;&bbox=${bbox}`;
+    case "Biedronka":
+      return `https://overpass-api.de/api/interpreter?data=
+      [out:json][timeout:25];(
+        node[brand:wikidata=Q857182][shop=supermarket](bbox);
+        way[brand:wikidata=Q857182][shop=supermarket](bbox);
+        relation[brand:wikidata=Q857182][shop=supermarket](bbox);
+      );
+      out;
+      >;
+      out skel qt;&bbox=${bbox}`;
+    case "Stokrotka":
+      return `https://overpass-api.de/api/interpreter?data=
+      [out:json][timeout:25];(
+        node[brand:wikidat=Q9345945][shop=supermarket](bbox);
+        way[brand:wikidata=Q9345945][shop=supermarket](bbox);
+        relation[brand:wikidata=Q9345945][shop=supermarket](bbox);
+      );
+      out;
+      >;
+      out skel qt;&bbox=${bbox}`;
+    case "Rossmann":
+      return `https://overpass-api.de/api/interpreter?data=
+      [out:json][timeout:25];(
+        node[brand:wikidata=Q316004][shop=chemist](bbox);
+        way[brand:wikidata=Q316004][shop=chemist](bbox);
+        relation[brand:wikidata=Q316004][shop=chemist](bbox);
+      );
+      out;
+      >;
+      out skel qt;&bbox=${bbox}`;
+    case "Lidl":
+      return `https://overpass-api.de/api/interpreter?data=
+      [out:json][timeout:25];(
+        node[brand:wikidata=Q151954][shop=supermarket](bbox);
+        way[brand:wikidata=Q151954][shop=supermarket](bbox);
+        relation[brand:wikidata=Q151954][shop=supermarket](bbox);
+      );
+      out;
+      >;
+      out skel qt;&bbox=${bbox}`;
+    default:
+      return "";
+  }
+};
+
 interface IShopData {
   id: number;
   lat: number;
@@ -71,12 +128,8 @@ export default function Map() {
     };
     const searchStores = async () => {
       const bboxString = await getBBox();
-      const resp = await fetch(
-        //żabka
-        `https://overpass-api.de/api/interpreter?data=[out:json][timeout:25];(node[%22brand:wikidata%22=%22Q2589061%22][%22shop%22=%22convenience%22](bbox);way[%22brand:wikidata%22=%22Q2589061%22][%22shop%22=%22convenience%22](bbox);relation[%22brand:wikidata%22=%22Q2589061%22][%22shop%22=%22convenience%22](bbox););out;
-        >;
-        out skel qt;&bbox=${bboxString}`
-      );
+      const resp = await fetch(getSearchEndpoint("Żabka", bboxString));
+
       const json = await resp.json();
       console.log(json);
       setShops(json.elements);
@@ -87,7 +140,7 @@ export default function Map() {
 
   return (
     <View style={styles.root}>
-      <Text>{text}</Text>
+      {/* <Text>{text}</Text> */}
       {location && (
         <MapView
           style={{ minHeight: "100%", minWidth: "100%" }}
