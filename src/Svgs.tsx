@@ -109,3 +109,71 @@ export const CardLineSVG = (props: SvgProps) => (
     <Path d="M0 .5h172" fill="none" stroke="#000" />
   </Svg>
 );
+export const AddCardSVG = (props: SvgProps) => {
+  return (
+    <Svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="30"
+      height="30"
+      fill="none"
+      viewBox="0 0 30 30"
+    >
+      <Path
+        stroke="#955F90"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.5"
+        d="M15 26.562c6.385 0 11.563-5.176 11.563-11.562 0-6.385-5.178-11.563-11.563-11.563C8.615 3.437 3.437 8.615 3.437 15c0 6.386 5.178 11.562 11.563 11.562z"
+        clipRule="evenodd"
+      ></Path>
+      <Path
+        stroke="#955F90"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.5"
+        d="M13.197 19.339L17.555 15l-4.358-4.339"
+      ></Path>
+    </Svg>
+  );
+};
+
+export const AparatIcon = (props: SvgProps) => {
+  return (
+    <Svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="27"
+      height="27"
+      fill="none"
+      viewBox="0 0 21 21"
+    >
+      <G clipPath="url(#clip0_10_53)">
+        <Path
+          fill="#FFF2F2"
+          d="M8.6 4.375l-1.75 1.75H3.5v10.5h14v-10.5h-3.35l-1.75-1.75H8.6zm-.725-1.75h5.25l1.75 1.75h3.5a.875.875 0 01.875.875V17.5a.875.875 0 01-.875.875H2.625a.875.875 0 01-.875-.875V5.25a.875.875 0 01.875-.875h3.5l1.75-1.75zM10.5 15.75a4.813 4.813 0 110-9.625 4.813 4.813 0 010 9.625zm0-1.75a3.063 3.063 0 100-6.125 3.063 3.063 0 000 6.125z"
+        ></Path>
+      </G>
+      <Defs>
+        <ClipPath id="clip0_10_53">
+          <Path fill="#fff" d="M0 0H21V21H0z"></Path>
+        </ClipPath>
+      </Defs>
+    </Svg>
+  );
+};
+
+export const ArrowIcon = () => {
+  return (
+    <Svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="36"
+      height="22"
+      fill="none"
+      viewBox="0 0 36 22"
+    >
+      <Path
+        fill="#000"
+        d="M17.717 21.82a1.43 1.43 0 00.76-1.255v-8.13H34.53c.811 0 1.469-.643 1.469-1.435s-.658-1.434-1.469-1.434H18.477V1.435c0-.524-.292-1.005-.76-1.255a1.496 1.496 0 00-1.492.04L.685 9.785A1.429 1.429 0 000 11c0 .493.258.95.685 1.215l15.54 9.565c.239.145.511.22.783.22.243 0 .488-.061.71-.18z"
+      ></Path>
+    </Svg>
+  );
+};

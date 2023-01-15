@@ -10,7 +10,8 @@ module.exports = function(api) {
         "safe": false,
         "allowUndefined": false,
         "verbose": false
-      }]
+      }],
+      'react-native-reanimated/plugin'
     ]
   };
 };

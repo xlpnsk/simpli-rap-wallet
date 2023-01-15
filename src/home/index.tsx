@@ -8,17 +8,55 @@ import { AddButton } from "../components/AddButton";
 import { Blob1SVG, Blob2SVG, Blob3SVG } from "../Svgs";
 import Wallet from "../wallet/WalletFlatList";
 
+import BottomSheetContent from "../components/BottomSheetContent";
+import { Provider } from "react-native-paper";
+import CardItemList from "../components/CardItemList";
+import AddCardModal from "../components/AddCardModal";
+
 type Props = NativeStackScreenProps<RootStackParamList, "Home">;
 
 const Home = ({ navigation }: Props) => {
+  const [openModal, setOpenModal] = React.useState(false);
+  const [openCardForm, setOpenCardForm] = React.useState(false);
+  const [shopData, setShopData] = React.useState("");
+  function openModalAndPassShopId(one: boolean, two: string) {
+    setOpenCardForm(one);
+    setShopData(two);
+  }
+
   return (
-    <View style={styles.container}>
-      <Blob1SVG style={styles.blob1} />
-      <Blob2SVG style={styles.blob2} />
-      <Blob3SVG style={styles.blob3} />
-      <Wallet navigation={navigation} />
-      <AddButton onPress={() => console.log()} />
-    </View>
+    <Provider>
+      <View style={styles.container}>
+        <Blob1SVG style={styles.blob1} />
+        <Blob2SVG style={styles.blob2} />
+        <Blob3SVG style={styles.blob3} />
+        <Wallet navigation={navigation} />
+        <AddButton onPress={() => setOpenModal(true)} />
+        <BottomSheetContent
+          visible={openModal}
+          onClose={(p) => {
+            setOpenModal(p);
+          }}
+        >
+          <View>
+            <CardItemList
+              cardHandler={(open, shopID) => {
+                openModalAndPassShopId(open, shopID);
+              }}
+            />
+          </View>
+        </BottomSheetContent>
+        <AddCardModal
+          visible={openCardForm}
+          text={"Add a new card"}
+          buttonText={"Proceed"}
+          onClose={() => {
+            setOpenCardForm(false);
+          }}
+          shopData={shopData}
+        />
+      </View>
+    </Provider>
   );
 };
 
