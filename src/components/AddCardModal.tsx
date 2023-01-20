@@ -3,16 +3,16 @@ import {
   Text,
   StyleSheet,
   Modal,
-  Button,
-  TextInput,
   Pressable,
   Animated,
+  Button
 } from "react-native";
 import * as React from "react";
 import { SimpleInput } from "./SimpleInput";
 import { Palette } from "../../style/palette";
 import { AparatIcon, ArrowIcon } from "../Svgs";
 import { IShopData } from "./CardItemList";
+import {BarCodeScanner} from "expo-barcode-scanner";
 
 interface AddCardModalProps {
   text: string;
@@ -30,32 +30,35 @@ const AddCardModal = (props: AddCardModalProps) => {
   const [isValidShopName, setIsValidShopName] = React.useState(false);
   const [isValidCardNumber, setIsValidCardNumber] = React.useState(false);
   const [isValidShopURL, setIsValidShopURL] = React.useState(false);
+  const [hasPermission, setHasPermission] = React.useState(false);
+  const [scanned, setScanned] = React.useState(false);
+  const [scannerText, setScannerText] = React.useState('Not yet scanned');
+  const [scannerOpen, setScannerOpen] = React.useState(false);
+
+
 
   const shopNameChange = (val: string) => {
-    if (val.trim().length >= 4) {
-      setShopName(val);
+    setShopName(val);
+    if (val.trim().length >0) {
       setIsValidShopName(true);
     } else {
-      setShopName(val);
       setIsValidShopName(false);
     }
   };
 
   const cardNumberChange = (val: string) => {
-    if (val.trim().length >= 4) {
-      setCardNumber(val);
+    setCardNumber(val);
+    if (val.trim().length >0) {
       setIsValidCardNumber(true);
     } else {
-      setCardNumber(val);
       setIsValidCardNumber(false);
     }
   };
   const shopURLChange = (val: string) => {
-    if (val.trim().length >= 4) {
-      setShopURL(val);
+    setShopURL(val);
+    if (val.trim().length > 0) {
       setIsValidShopURL(true);
     } else {
-      setShopURL(val);
       setIsValidShopURL(false);
     }
   };
@@ -80,6 +83,25 @@ const AddCardModal = (props: AddCardModalProps) => {
       console.log("Bad data");
     }
   };
+
+  const askForCameraPermission = () => {
+    setScannerOpen(true);
+    console.log("perm");
+    (async () =>{
+      const {status} = await BarCodeScanner.requestPermissionsAsync();
+      setHasPermission(status === "granted")
+    })()
+  };
+
+  const handleBarCodeScanned = ({type,data}) =>{
+    setScanned(true);
+    setScannerText(data);
+    cardNumberChange(data);
+    console.log("Type: " + type + "\nData: " + data);
+  };
+  
+  
+if(scannerOpen === false){
   return (
     <Modal visible={visible} transparent={true}>
       <View style={styles.modal}>
@@ -112,7 +134,7 @@ const AddCardModal = (props: AddCardModalProps) => {
               {isValidShopName ? null : (
                 <Animated.View>
                   <Text style={styles.errorText}>
-                    Shop name needs to be at least 4 characters long
+                    Shop name cannot be empty!
                   </Text>
                 </Animated.View>
               )}
@@ -125,13 +147,12 @@ const AddCardModal = (props: AddCardModalProps) => {
                   value={cardNumber}
                   style={styles.input}
                   inputTitle={"Card number"}
-                  keyboardType={"numeric"}
                 />
                 <View style={styles.aparatCircle}>
                   <Pressable
                     style={styles.aparatIcon}
                     onPress={() => {
-                      console.log("icon click");
+                      askForCameraPermission();
                     }}
                   >
                     <AparatIcon />
@@ -141,7 +162,7 @@ const AddCardModal = (props: AddCardModalProps) => {
               {isValidCardNumber ? null : (
                 <Animated.View>
                   <Text style={styles.errorText}>
-                    Card number must consist of up to 9 numebers
+                    Card number cannot be empty!
                   </Text>
                 </Animated.View>
               )}
@@ -157,7 +178,7 @@ const AddCardModal = (props: AddCardModalProps) => {
               />
               {isValidShopURL ? null : (
                 <Animated.View>
-                  <Text style={styles.errorText}>Shop URL must be a URL</Text>
+                  <Text style={styles.errorText}>Shop URL cannot be empty!</Text>
                 </Animated.View>
               )}
             </View>
@@ -174,6 +195,34 @@ const AddCardModal = (props: AddCardModalProps) => {
       </View>
     </Modal>
   );
+}
+if(scannerOpen === true){
+return(
+  <Modal>
+  <View style={styles.scanerContainer}>
+      <View style={styles.barcodebox}>
+        <BarCodeScanner 
+        onBarCodeScanned={scanned ? undefined : handleBarCodeScanned} 
+        style={{height:400,width:400}}/>
+      </View>
+      <Text style={styles.scannerText}>{scannerText}</Text>
+      <Pressable onPress={()=>{
+          setScanned(false)
+          setScannerOpen(false)
+          setScannerText('Not yet scanned')}}>
+        <Text style={styles.scannerButton}> Close scanner</Text>
+      </Pressable>
+
+      {scanned && <Pressable onPress={() => {
+            setScanned(false)
+            setScannerText(scannerText)}}>
+          <Text style={styles.scannerButton}> Scan again</Text>
+          </Pressable>}
+
+  </View></Modal>
+);}
+
+ 
 };
 
 const styles = StyleSheet.create({
@@ -262,6 +311,35 @@ const styles = StyleSheet.create({
   errorText: {
     color: "red",
     fontSize: 11,
+  },
+  scanerContainer:{
+    height:'100%',
+    backgroundColor:"#fff",
+    alignItems:'center',
+    justifyContent:'center',
+  },
+  barcodebox:{
+    backgroundColor:'#fff',
+    alignItems:'center',
+    justifyContent:'center',
+    height:300,
+    width:300,
+    overflow:'hidden',
+    borderRadius:30,
+  },
+  scannerText: {
+    fontSize: 16,
+    margin: 20,
+  },
+  scannerButton:{
+    color: Palette.LightBlue,
+    fontSize:18,
+    textAlign:'center',
+    marginVertical:10,
+    borderRadius: 5,
+    width:150,
+    height:30,
+    backgroundColor: Palette.Fuchsia,
   },
 });
 
