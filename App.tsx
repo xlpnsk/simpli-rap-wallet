@@ -10,14 +10,7 @@ import RootNavigation from "./src/root";
 
 SplashScreen.preventAutoHideAsync();
 
-export type RootStackParamList = {
-  Home: undefined;
-  Map: { userId: string };
-  Settings: undefined;
-};
-
 export default function App() {
-
   const [fontsLoaded] = useFonts({
     "Poppins-Regular": require("./assets/fonts/Poppins-Regular.ttf"),
   });
@@ -32,12 +25,9 @@ export default function App() {
     return null;
   }
 
-
-
   return (
     <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
       <RootNavigation />
     </View>
   );
-
 }

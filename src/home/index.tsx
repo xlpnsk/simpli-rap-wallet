@@ -1,28 +1,58 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
-import { View, StyleSheet } from "react-native";
-import { RootStackParamList } from "../../App";
+import { View, StyleSheet, Alert } from "react-native";
 import { Palette } from "../../style/palette";
 import { AddButton } from "../components/AddButton";
 
 import { Blob1SVG, Blob2SVG, Blob3SVG } from "../Svgs";
-import Wallet from "../wallet/WalletFlatList";
+import Wallet, { IWallet } from "../wallet/WalletFlatList";
 
-import BottomSheetContent from "../components/BottomSheetContent";
 import { Provider } from "react-native-paper";
-import CardItemList, { IShopData } from "../components/CardItemList";
+import { IShopData } from "./BottomShopList/CardItemList";
 import AddCardModal from "../components/AddCardModal";
+import { RootAuthorizedStackParamList } from "../root/AuthorizedStack";
+import { BottomShopList } from "./BottomShopList";
+import { SessionContext } from "../root";
+import { supabase } from "../supabase";
 
-type Props = NativeStackScreenProps<RootStackParamList, "Home">;
+type Props = NativeStackScreenProps<RootAuthorizedStackParamList, "Home">;
 
-const Home = ({ navigation }: Props) => {
+const Home = ({ navigation, route }: Props) => {
   const [openModal, setOpenModal] = React.useState(false);
   const [openCardForm, setOpenCardForm] = React.useState(false);
   const [shopData, setShopData] = React.useState<IShopData | null>(null);
-  function openModalAndPassShopId(isFormOpen: boolean, shopData: IShopData) {
+  const session = React.useContext(SessionContext);
+  const [wallet, setWallet] = React.useState<IWallet[]>([]);
+
+  const openModalAndPassShopId = (isFormOpen: boolean, shopData: IShopData) => {
     setOpenCardForm(isFormOpen);
     setShopData(shopData);
-  }
+  };
+
+  const fetchWallet = async () => {
+    let { data: walletData, error: walletError } = await supabase
+      .from("wallets")
+      .select(
+        `
+          id,
+          card_code,
+          code_type,
+          shops(
+            id,
+            name,
+            leaflet_url,
+            is_common
+          )
+        `
+      )
+      .eq("user_id", session.user.id);
+    if (walletError) throw new Error(walletError.message);
+    setWallet(walletData as IWallet[]);
+  };
+
+  React.useEffect(() => {
+    fetchWallet().catch((error) => Alert.alert(error.message));
+  }, []);
 
   return (
     <Provider>
@@ -30,28 +60,22 @@ const Home = ({ navigation }: Props) => {
         <Blob1SVG style={styles.blob1} />
         <Blob2SVG style={styles.blob2} />
         <Blob3SVG style={styles.blob3} />
-        <Wallet navigation={navigation} />
+        <Wallet walletData={wallet} navigation={navigation} route={route} />
         <AddButton onPress={() => setOpenModal(true)} />
-        <BottomSheetContent
+        <BottomShopList
           visible={openModal}
+          cardHandler={openModalAndPassShopId}
           onClose={(p) => {
             setOpenModal(p);
           }}
-        >
-          <View>
-            <CardItemList
-              cardHandler={(open, shopID) => {
-                openModalAndPassShopId(open, shopID);
-              }}
-            />
-          </View>
-        </BottomSheetContent>
+        />
         <AddCardModal
           visible={openCardForm}
           text={"Add a new card"}
           buttonText={"Proceed"}
           onClose={() => {
             setOpenCardForm(false);
+            fetchWallet().catch((error) => Alert.alert(error.message));
           }}
           shopData={shopData}
         />

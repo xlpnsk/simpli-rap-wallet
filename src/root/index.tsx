@@ -8,7 +8,6 @@ export const SessionContext = React.createContext<Session | null>(null);
 
 export default function RootNavigation() {
   const session = useSession();
-  console.log(session);
   return (
     <SessionContext.Provider value={session}>
       {session && session.user ? <AuthorizedStack /> : <UnauthorizedStack />}

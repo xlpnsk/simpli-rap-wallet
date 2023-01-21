@@ -3,6 +3,8 @@ import { Platform, Text, View, StyleSheet, Dimensions } from "react-native";
 import * as Location from "expo-location";
 import MapView, { LatLng, Marker } from "react-native-maps";
 import { Palette } from "../../style/palette";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { RootAuthorizedStackParamList } from "../root/AuthorizedStack";
 
 const defRegion = {
   latitude: 37.78825,
@@ -12,60 +14,67 @@ const defRegion = {
 };
 
 const getSearchEndpoint = (shopName: string, bbox: string) => {
+  let endpoint: string;
   switch (shopName) {
     case "Żabka":
-      return `https://overpass-api.de/api/interpreter?data=
+      endpoint = `https://overpass-api.de/api/interpreter?data=
       [out:json][timeout:25];(
-        node[brand:wikidata=Q2589061][shop=convenience](bbox);
-        way[brand:wikidata=Q2589061][shop=convenience](bbox);
-        relation[brand:wikidata=Q2589061][shop=convenience](bbox);
+        node["brand:wikidata"=Q2589061][shop=convenience](bbox);
+        way["brand:wikidata"=Q2589061][shop=convenience](bbox);
+        relation["brand:wikidata"=Q2589061][shop=convenience](bbox);
       );
       out;
       >;
       out skel qt;&bbox=${bbox}`;
+      break;
     case "Biedronka":
-      return `https://overpass-api.de/api/interpreter?data=
+      endpoint = `https://overpass-api.de/api/interpreter?data=
       [out:json][timeout:25];(
-        node[brand:wikidata=Q857182][shop=supermarket](bbox);
-        way[brand:wikidata=Q857182][shop=supermarket](bbox);
-        relation[brand:wikidata=Q857182][shop=supermarket](bbox);
+        node["brand:wikidata"=Q857182][shop=supermarket](bbox);
+        way["brand:wikidata"=Q857182][shop=supermarket](bbox);
+        relation["brand:wikidata"=Q857182][shop=supermarket](bbox);
       );
       out;
       >;
       out skel qt;&bbox=${bbox}`;
+      break;
     case "Stokrotka":
-      return `https://overpass-api.de/api/interpreter?data=
+      endpoint = `https://overpass-api.de/api/interpreter?data=
       [out:json][timeout:25];(
-        node[brand:wikidat=Q9345945][shop=supermarket](bbox);
-        way[brand:wikidata=Q9345945][shop=supermarket](bbox);
-        relation[brand:wikidata=Q9345945][shop=supermarket](bbox);
+        node["brand:wikidat"=Q9345945][shop=supermarket](bbox);
+        way["brand:wikidata"=Q9345945][shop=supermarket](bbox);
+        relation["brand:wikidata"=Q9345945][shop=supermarket](bbox);
       );
       out;
       >;
       out skel qt;&bbox=${bbox}`;
+      break;
     case "Rossmann":
-      return `https://overpass-api.de/api/interpreter?data=
+      endpoint = `https://overpass-api.de/api/interpreter?data=
       [out:json][timeout:25];(
-        node[brand:wikidata=Q316004][shop=chemist](bbox);
-        way[brand:wikidata=Q316004][shop=chemist](bbox);
-        relation[brand:wikidata=Q316004][shop=chemist](bbox);
+        node["brand:wikidata"=Q316004][shop=chemist](bbox);
+        way["brand:wikidata"=Q316004][shop=chemist](bbox);
+        relation["brand:wikidat"a=Q316004][shop=chemist](bbox);
       );
       out;
       >;
       out skel qt;&bbox=${bbox}`;
+      break;
     case "Lidl":
-      return `https://overpass-api.de/api/interpreter?data=
+      endpoint = `https://overpass-api.de/api/interpreter?data=
       [out:json][timeout:25];(
-        node[brand:wikidata=Q151954][shop=supermarket](bbox);
-        way[brand:wikidata=Q151954][shop=supermarket](bbox);
-        relation[brand:wikidata=Q151954][shop=supermarket](bbox);
+        node["brand:wikidata"=Q151954][shop=supermarket](bbox);
+        way["brand:wikidata"=Q151954][shop=supermarket](bbox);
+        relation["brand:wikidata"=Q151954][shop=supermarket](bbox);
       );
       out;
       >;
       out skel qt;&bbox=${bbox}`;
+      break;
     default:
-      return "";
+      endpoint = "";
   }
+  return endpoint;
 };
 
 interface IShopData {
@@ -86,8 +95,11 @@ interface IShopData {
     shop: string;
   };
 }
+type Props = NativeStackScreenProps<RootAuthorizedStackParamList, "Map">;
 
-export default function Map() {
+const Map = ({ route }: Props) => {
+  const { shopName } = route.params;
+
   const [location, setLocation] = useState<Location.LocationObject | null>(
     null
   );
@@ -128,8 +140,8 @@ export default function Map() {
     };
     const searchStores = async () => {
       const bboxString = await getBBox();
-      const resp = await fetch(getSearchEndpoint("Żabka", bboxString));
-
+      const resp = await fetch(getSearchEndpoint(shopName, bboxString));
+      console.log(resp);
       const json = await resp.json();
       console.log(json);
       setShops(json.elements);
@@ -137,7 +149,6 @@ export default function Map() {
     console.log(region);
     mapRef?.current && searchStores();
   };
-
   return (
     <View style={styles.root}>
       {/* <Text>{text}</Text> */}
@@ -179,8 +190,8 @@ export default function Map() {
       )}
     </View>
   );
-}
-
+};
+export default Map;
 const styles = StyleSheet.create({
   root: {
     flex: 1,

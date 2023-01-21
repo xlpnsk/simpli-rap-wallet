@@ -45,7 +45,7 @@ const BottomSheetContent = (props: BottomSheetContentProps) => {
     }).start();
     setTimeout(() => {
       onClose(false);
-    }, 700);
+    }, 1700);
   }
 
   return (

@@ -5,62 +5,58 @@ import {
   Modal,
   Pressable,
   Animated,
-  Button
+  Alert,
 } from "react-native";
 import * as React from "react";
 import { SimpleInput } from "./SimpleInput";
 import { Palette } from "../../style/palette";
 import { AparatIcon, ArrowIcon } from "../Svgs";
-import { IShopData } from "./CardItemList";
-import {BarCodeScanner} from "expo-barcode-scanner";
+import { BarCodeScanner } from "expo-barcode-scanner";
+import { IShopData } from "../home/BottomShopList/CardItemList";
+import { supabase } from "../supabase";
+import { SessionContext } from "../root";
 
 interface AddCardModalProps {
   text: string;
   buttonText: string;
   onClose: () => void;
   visible: boolean;
-  shopData: IShopData;
+  shopData?: IShopData;
 }
 
 const AddCardModal = (props: AddCardModalProps) => {
   const { text, buttonText, onClose, visible, shopData } = props;
-  const [shopName, setShopName] = React.useState(shopData?.name);
+
+  const [shopName, setShopName] = React.useState(shopData?.name || "");
   const [cardNumber, setCardNumber] = React.useState("");
-  const [shopURL, setShopURL] = React.useState("");
+  const [shopURL, setShopURL] = React.useState(shopData?.leaflet_url || "");
   const [isValidShopName, setIsValidShopName] = React.useState(false);
   const [isValidCardNumber, setIsValidCardNumber] = React.useState(false);
   const [isValidShopURL, setIsValidShopURL] = React.useState(false);
   const [hasPermission, setHasPermission] = React.useState(false);
   const [scanned, setScanned] = React.useState(false);
-  const [scannerText, setScannerText] = React.useState('Not yet scanned');
+  const [scannerText, setScannerText] = React.useState("Not yet scanned");
   const [scannerOpen, setScannerOpen] = React.useState(false);
 
+  const session = React.useContext(SessionContext);
 
+  React.useEffect(() => {
+    shopNameChange(shopData?.name || "");
+    shopURLChange(shopData?.leaflet_url || "");
+  }, [shopData]);
 
   const shopNameChange = (val: string) => {
     setShopName(val);
-    if (val.trim().length >0) {
-      setIsValidShopName(true);
-    } else {
-      setIsValidShopName(false);
-    }
+    setIsValidShopName(val.trim().length > 0);
   };
 
   const cardNumberChange = (val: string) => {
     setCardNumber(val);
-    if (val.trim().length >0) {
-      setIsValidCardNumber(true);
-    } else {
-      setIsValidCardNumber(false);
-    }
+    setIsValidCardNumber(val.trim().length > 0);
   };
   const shopURLChange = (val: string) => {
     setShopURL(val);
-    if (val.trim().length > 0) {
-      setIsValidShopURL(true);
-    } else {
-      setIsValidShopURL(false);
-    }
+    setIsValidShopURL(val.trim().length > 0);
   };
 
   const clearData = () => {
@@ -73,9 +69,80 @@ const AddCardModal = (props: AddCardModalProps) => {
     onClose();
   };
 
-  const handleForm = () => {
+  const handleForm = async () => {
     if (isValidShopName && isValidCardNumber && isValidShopURL === true) {
-      console.log(shopData, shopName, cardNumber, shopURL);
+      // console.log(shopData, shopName, cardNumber, shopURL);
+      if (!shopData) {
+        let { data: dbShop, error } = await supabase
+          .from("shops")
+          .select("id")
+          .eq("name", shopName);
+        if (!error && dbShop.at(0)) {
+          //shop does exist in db
+          const { data: newWalletRecordData, error: newWalletRecordError } =
+            await supabase.from("wallets").insert([
+              {
+                card_code: cardNumber,
+                code_type: "",
+                user_id: session.user.id,
+                shop_id: dbShop.at(0).id,
+              },
+            ]);
+          if (newWalletRecordError) {
+            Alert.alert(newWalletRecordError.message);
+            return;
+          }
+          Alert.alert("Card successfully added");
+        } else if (!error && !dbShop.at(0)) {
+          //shop does not exist in db
+          const { data: newShopData, error: newShopDataError } = await supabase
+            .from("shops")
+            .insert([
+              {
+                name: shopName,
+                leaflet_url: shopURL,
+              },
+            ]);
+          if (newShopDataError) {
+            Alert.alert(newShopDataError.message);
+            return;
+          }
+          const { data: newWalletRecordData, error: newWalletRecordError } =
+            await supabase.from("wallets").insert([
+              {
+                card_code: cardNumber,
+                code_type: "",
+                user_id: session.user.id,
+                shop_id: dbShop.at(0).id,
+              },
+            ]);
+          if (newWalletRecordError) {
+            Alert.alert(newWalletRecordError.message);
+            return;
+          }
+          Alert.alert("Card successfully added");
+          clearData();
+        } else {
+          Alert.alert(error.message);
+        }
+      } else {
+        //TODO: add code_type field to the form
+        const { data: newWalletRecordData, error: newWalletRecordError } =
+          await supabase.from("wallets").insert([
+            {
+              card_code: cardNumber,
+              code_type: "",
+              user_id: session.user.id,
+              shop_id: shopData.id,
+            },
+          ]);
+        if (newWalletRecordError) {
+          Alert.alert(newWalletRecordError.message);
+          return;
+        }
+        Alert.alert("Card successfully added");
+        clearData();
+      }
     } else {
       console.log(isValidShopName);
       console.log(isValidCardNumber);
@@ -87,142 +154,155 @@ const AddCardModal = (props: AddCardModalProps) => {
   const askForCameraPermission = () => {
     setScannerOpen(true);
     console.log("perm");
-    (async () =>{
-      const {status} = await BarCodeScanner.requestPermissionsAsync();
-      setHasPermission(status === "granted")
-    })()
+    (async () => {
+      const { status } = await BarCodeScanner.requestPermissionsAsync();
+      setHasPermission(status === "granted");
+    })();
   };
 
-  const handleBarCodeScanned = ({type,data}) =>{
+  const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
     setScannerText(data);
     cardNumberChange(data);
     console.log("Type: " + type + "\nData: " + data);
   };
-  
-  
-if(scannerOpen === false){
-  return (
-    <Modal visible={visible} transparent={true}>
-      <View style={styles.modal}>
-        <View style={styles.modalContentWrapper}>
-          <View style={styles.modalContent}>
-            <View style={styles.header}>
-              <View style={styles.arrowIcon}>
-                <Pressable
-                  onPress={() => {
-                    clearData();
-                  }}
-                >
-                  <ArrowIcon />
-                </Pressable>
-              </View>
 
-              <Text style={styles.headerText}>{text}</Text>
-            </View>
-
-            <View style={styles.inputs}>
-              <SimpleInput
-                onChangeText={(val) => {
-                  shopNameChange(val);
-                }}
-                placeholder={"Shop name"}
-                value={shopName}
-                style={styles.input}
-                inputTitle={"Shop name"}
-              />
-              {isValidShopName ? null : (
-                <Animated.View>
-                  <Text style={styles.errorText}>
-                    Shop name cannot be empty!
-                  </Text>
-                </Animated.View>
-              )}
-              <View style={styles.middleInput}>
-                <SimpleInput
-                  onChangeText={(val) => {
-                    cardNumberChange(val);
-                  }}
-                  placeholder={"156829..."}
-                  value={cardNumber}
-                  style={styles.input}
-                  inputTitle={"Card number"}
-                />
-                <View style={styles.aparatCircle}>
+  if (scannerOpen === false) {
+    return (
+      <Modal visible={visible} transparent={true}>
+        <View style={styles.modal}>
+          <View style={styles.modalContentWrapper}>
+            <View style={styles.modalContent}>
+              <View style={styles.header}>
+                <View style={styles.arrowIcon}>
                   <Pressable
-                    style={styles.aparatIcon}
                     onPress={() => {
-                      askForCameraPermission();
+                      clearData();
                     }}
                   >
-                    <AparatIcon />
+                    <ArrowIcon />
                   </Pressable>
                 </View>
+
+                <Text style={styles.headerText}>{text}</Text>
               </View>
-              {isValidCardNumber ? null : (
-                <Animated.View>
-                  <Text style={styles.errorText}>
-                    Card number cannot be empty!
-                  </Text>
-                </Animated.View>
-              )}
-              <SimpleInput
-                onChangeText={(val) => {
-                  shopURLChange(val);
+
+              <View style={styles.inputs}>
+                <SimpleInput
+                  onChangeText={(val) => {
+                    shopNameChange(val);
+                  }}
+                  placeholder={"Shop name"}
+                  value={shopName}
+                  style={styles.input}
+                  inputTitle={"Shop name"}
+                  editable={!!!shopData}
+                  selectTextOnFocus={!!!shopData}
+                />
+                {isValidShopName ? null : (
+                  <Animated.View>
+                    <Text style={styles.errorText}>
+                      Shop name cannot be empty!
+                    </Text>
+                  </Animated.View>
+                )}
+                <View style={styles.middleInput}>
+                  <SimpleInput
+                    onChangeText={(val) => {
+                      cardNumberChange(val);
+                    }}
+                    placeholder={"156829..."}
+                    value={cardNumber}
+                    style={styles.input}
+                    inputTitle={"Card number"}
+                  />
+                  <View style={styles.aparatCircle}>
+                    <Pressable
+                      style={styles.aparatIcon}
+                      onPress={() => {
+                        askForCameraPermission();
+                      }}
+                    >
+                      <AparatIcon />
+                    </Pressable>
+                  </View>
+                </View>
+                {isValidCardNumber ? null : (
+                  <Animated.View>
+                    <Text style={styles.errorText}>
+                      Card number cannot be empty!
+                    </Text>
+                  </Animated.View>
+                )}
+                <SimpleInput
+                  onChangeText={(val) => {
+                    shopURLChange(val);
+                  }}
+                  placeholder={"https://"}
+                  value={shopURL}
+                  style={styles.input}
+                  inputTitle={"Shop URL"}
+                  keyboardType={"url"}
+                  editable={!!!shopData}
+                  selectTextOnFocus={!!!shopData}
+                />
+                {isValidShopURL ? null : (
+                  <Animated.View>
+                    <Text style={styles.errorText}>
+                      Shop URL cannot be empty!
+                    </Text>
+                  </Animated.View>
+                )}
+              </View>
+              <Pressable
+                onPress={() => {
+                  handleForm();
                 }}
-                placeholder={"https://"}
-                value={shopURL}
-                style={styles.input}
-                inputTitle={"Shop URL"}
-                keyboardType={"url"}
-              />
-              {isValidShopURL ? null : (
-                <Animated.View>
-                  <Text style={styles.errorText}>Shop URL cannot be empty!</Text>
-                </Animated.View>
-              )}
+                style={styles.button}
+              >
+                <Text style={styles.buttonText}>{buttonText}</Text>
+              </Pressable>
             </View>
-            <Pressable
-              onPress={() => {
-                handleForm();
-              }}
-              style={styles.button}
-            >
-              <Text style={styles.buttonText}>{buttonText}</Text>
-            </Pressable>
           </View>
         </View>
-      </View>
-    </Modal>
-  );
-}
-if(scannerOpen === true){
-return(
-  <Modal>
-  <View style={styles.scanerContainer}>
-      <View style={styles.barcodebox}>
-        <BarCodeScanner 
-        onBarCodeScanned={scanned ? undefined : handleBarCodeScanned} 
-        style={{height:400,width:400}}/>
-      </View>
-      <Text style={styles.scannerText}>{scannerText}</Text>
-      <Pressable onPress={()=>{
-          setScanned(false)
-          setScannerOpen(false)
-          setScannerText('Not yet scanned')}}>
-        <Text style={styles.scannerButton}> Close scanner</Text>
-      </Pressable>
+      </Modal>
+    );
+  }
+  if (scannerOpen === true) {
+    return (
+      <Modal>
+        <View style={styles.scanerContainer}>
+          <View style={styles.barcodebox}>
+            <BarCodeScanner
+              onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+              style={{ height: 400, width: 400 }}
+            />
+          </View>
+          <Text style={styles.scannerText}>{scannerText}</Text>
+          <Pressable
+            onPress={() => {
+              setScanned(false);
+              setScannerOpen(false);
+              setScannerText("Not yet scanned");
+            }}
+          >
+            <Text style={styles.scannerButton}> Close scanner</Text>
+          </Pressable>
 
-      {scanned && <Pressable onPress={() => {
-            setScanned(false)
-            setScannerText(scannerText)}}>
-          <Text style={styles.scannerButton}> Scan again</Text>
-          </Pressable>}
-
-  </View></Modal>
-);}
-
- 
+          {scanned && (
+            <Pressable
+              onPress={() => {
+                setScanned(false);
+                setScannerText(scannerText);
+              }}
+            >
+              <Text style={styles.scannerButton}> Scan again</Text>
+            </Pressable>
+          )}
+        </View>
+      </Modal>
+    );
+  }
 };
 
 const styles = StyleSheet.create({
@@ -312,33 +392,33 @@ const styles = StyleSheet.create({
     color: "red",
     fontSize: 11,
   },
-  scanerContainer:{
-    height:'100%',
-    backgroundColor:"#fff",
-    alignItems:'center',
-    justifyContent:'center',
+  scanerContainer: {
+    height: "100%",
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
-  barcodebox:{
-    backgroundColor:'#fff',
-    alignItems:'center',
-    justifyContent:'center',
-    height:300,
-    width:300,
-    overflow:'hidden',
-    borderRadius:30,
+  barcodebox: {
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+    height: 300,
+    width: 300,
+    overflow: "hidden",
+    borderRadius: 30,
   },
   scannerText: {
     fontSize: 16,
     margin: 20,
   },
-  scannerButton:{
+  scannerButton: {
     color: Palette.LightBlue,
-    fontSize:18,
-    textAlign:'center',
-    marginVertical:10,
+    fontSize: 18,
+    textAlign: "center",
+    marginVertical: 10,
     borderRadius: 5,
-    width:150,
-    height:30,
+    width: 150,
+    height: 30,
     backgroundColor: Palette.Fuchsia,
   },
 });
