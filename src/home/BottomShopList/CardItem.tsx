@@ -1,11 +1,11 @@
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { Button } from "react-native-paper";
-import { AddCardSVG } from "../Svgs";
+import { AddCardSVG } from "../../Svgs";
 import * as React from "react";
 import { IShopData } from "./CardItemList";
 interface CardItemProps {
-  shopData: IShopData;
-  handleForm: (open: boolean, shopData: IShopData) => void;
+  shopData?: IShopData;
+  handleForm: (open: boolean, shopData?: IShopData) => void;
 }
 
 const CardItem = (props: CardItemProps) => {
@@ -21,7 +21,7 @@ const CardItem = (props: CardItemProps) => {
           <View style={styles.cardContent}>
             <Text>
               {/* {.id} */}
-              {shopData.name}
+              {shopData?.name || "Nowy sklep"}
             </Text>
           </View>
         </View>

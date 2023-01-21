@@ -7,57 +7,53 @@ import {
   TextInput,
   Pressable,
   Animated,
+  Alert,
 } from "react-native";
 import * as React from "react";
 import { SimpleInput } from "./SimpleInput";
 import { Palette } from "../../style/palette";
 import { AparatIcon, ArrowIcon } from "../Svgs";
-import { IShopData } from "./CardItemList";
+import { IShopData } from "../home/BottomShopList/CardItemList";
+import { supabase } from "../supabase";
+import { SessionContext } from "../root";
 
 interface AddCardModalProps {
   text: string;
   buttonText: string;
   onClose: () => void;
   visible: boolean;
-  shopData: IShopData;
+  shopData?: IShopData;
 }
 
 const AddCardModal = (props: AddCardModalProps) => {
   const { text, buttonText, onClose, visible, shopData } = props;
-  const [shopName, setShopName] = React.useState(shopData?.name);
+
+  const [shopName, setShopName] = React.useState(shopData?.name || "");
   const [cardNumber, setCardNumber] = React.useState("");
-  const [shopURL, setShopURL] = React.useState("");
+  const [shopURL, setShopURL] = React.useState(shopData?.leaflet_url || "");
   const [isValidShopName, setIsValidShopName] = React.useState(false);
   const [isValidCardNumber, setIsValidCardNumber] = React.useState(false);
   const [isValidShopURL, setIsValidShopURL] = React.useState(false);
 
+  const session = React.useContext(SessionContext);
+
+  React.useEffect(() => {
+    shopNameChange(shopData?.name || "");
+    shopURLChange(shopData?.leaflet_url || "");
+  }, [shopData]);
+
   const shopNameChange = (val: string) => {
-    if (val.trim().length >= 4) {
-      setShopName(val);
-      setIsValidShopName(true);
-    } else {
-      setShopName(val);
-      setIsValidShopName(false);
-    }
+    setShopName(val);
+    setIsValidShopName(val.trim().length >= 4);
   };
 
   const cardNumberChange = (val: string) => {
-    if (val.trim().length >= 4) {
-      setCardNumber(val);
-      setIsValidCardNumber(true);
-    } else {
-      setCardNumber(val);
-      setIsValidCardNumber(false);
-    }
+    setCardNumber(val);
+    setIsValidCardNumber(val.trim().length >= 4);
   };
   const shopURLChange = (val: string) => {
-    if (val.trim().length >= 4) {
-      setShopURL(val);
-      setIsValidShopURL(true);
-    } else {
-      setShopURL(val);
-      setIsValidShopURL(false);
-    }
+    setShopURL(val);
+    setIsValidShopURL(val.trim().length >= 4);
   };
 
   const clearData = () => {
@@ -70,9 +66,80 @@ const AddCardModal = (props: AddCardModalProps) => {
     onClose();
   };
 
-  const handleForm = () => {
+  const handleForm = async () => {
     if (isValidShopName && isValidCardNumber && isValidShopURL === true) {
-      console.log(shopData, shopName, cardNumber, shopURL);
+      // console.log(shopData, shopName, cardNumber, shopURL);
+      if (!shopData) {
+        let { data: dbShop, error } = await supabase
+          .from("shops")
+          .select("id")
+          .eq("name", shopName);
+        if (!error && dbShop.at(0)) {
+          //shop does exist in db
+          const { data: newWalletRecordData, error: newWalletRecordError } =
+            await supabase.from("wallets").insert([
+              {
+                card_code: cardNumber,
+                code_type: "",
+                user_id: session.user.id,
+                shop_id: dbShop.at(0).id,
+              },
+            ]);
+          if (newWalletRecordError) {
+            Alert.alert(newWalletRecordError.message);
+            return;
+          }
+          Alert.alert("Card successfully added");
+        } else if (!error && !dbShop.at(0)) {
+          //shop does not exist in db
+          const { data: newShopData, error: newShopDataError } = await supabase
+            .from("shops")
+            .insert([
+              {
+                name: shopName,
+                leaflet_url: shopURL,
+              },
+            ]);
+          if (newShopDataError) {
+            Alert.alert(newShopDataError.message);
+            return;
+          }
+          const { data: newWalletRecordData, error: newWalletRecordError } =
+            await supabase.from("wallets").insert([
+              {
+                card_code: cardNumber,
+                code_type: "",
+                user_id: session.user.id,
+                shop_id: dbShop.at(0).id,
+              },
+            ]);
+          if (newWalletRecordError) {
+            Alert.alert(newWalletRecordError.message);
+            return;
+          }
+          Alert.alert("Card successfully added");
+          clearData();
+        } else {
+          Alert.alert(error.message);
+        }
+      } else {
+        //TODO: add code_type field to the form
+        const { data: newWalletRecordData, error: newWalletRecordError } =
+          await supabase.from("wallets").insert([
+            {
+              card_code: cardNumber,
+              code_type: "",
+              user_id: session.user.id,
+              shop_id: shopData.id,
+            },
+          ]);
+        if (newWalletRecordError) {
+          Alert.alert(newWalletRecordError.message);
+          return;
+        }
+        Alert.alert("Card successfully added");
+        clearData();
+      }
     } else {
       console.log(isValidShopName);
       console.log(isValidCardNumber);
@@ -108,6 +175,8 @@ const AddCardModal = (props: AddCardModalProps) => {
                 value={shopName}
                 style={styles.input}
                 inputTitle={"Shop name"}
+                editable={!!!shopData}
+                selectTextOnFocus={!!!shopData}
               />
               {isValidShopName ? null : (
                 <Animated.View>
@@ -125,7 +194,6 @@ const AddCardModal = (props: AddCardModalProps) => {
                   value={cardNumber}
                   style={styles.input}
                   inputTitle={"Card number"}
-                  keyboardType={"numeric"}
                 />
                 <View style={styles.aparatCircle}>
                   <Pressable
@@ -154,6 +222,8 @@ const AddCardModal = (props: AddCardModalProps) => {
                 style={styles.input}
                 inputTitle={"Shop URL"}
                 keyboardType={"url"}
+                editable={!!!shopData}
+                selectTextOnFocus={!!!shopData}
               />
               {isValidShopURL ? null : (
                 <Animated.View>

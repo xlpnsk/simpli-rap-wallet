@@ -27,7 +27,7 @@ const Stack = createNativeStackNavigator();
 
 export type RootAuthorizedStackParamList = {
   Home: undefined;
-  Map: { userId: string };
+  Map: { shopName: string };
   Account: undefined;
 };
 

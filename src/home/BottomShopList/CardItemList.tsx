@@ -1,37 +1,21 @@
 import { View, Text, ScrollView, Alert, Dimensions } from "react-native";
 import * as React from "react";
 import CardItem from "./CardItem";
-import { supabase } from "../supabase";
+import { supabase } from "../../supabase";
 
 interface CardItemListProps {
   cardHandler: (card: boolean, shopData: IShopData) => void;
+  shopData: IShopData[];
 }
 
 export interface IShopData {
   id: number;
   name: string;
   leaflet_url: string;
-  is_common: string;
+  is_common: boolean;
 }
 
-const CardItemList = (props: CardItemListProps) => {
-  const { cardHandler } = props;
-  const [shopData, setShopData] = React.useState<IShopData[]>([]);
-  React.useEffect(() => {
-    const fetchShopsData = async () => {
-      let { data: shops, error } = await supabase
-        .from("shops")
-        .select("*")
-        .eq("is_common", true);
-      if (error) {
-        throw new Error(error.message);
-      }
-      console.log("shops", shops);
-      setShopData(shops);
-    };
-
-    fetchShopsData().catch((error) => Alert.alert(error.message));
-  }, []);
+const CardItemList = ({ cardHandler, shopData }: CardItemListProps) => {
   const screenWidth = Dimensions.get("window").width;
   return (
     <View style={{ width: "100%" }}>
@@ -41,12 +25,18 @@ const CardItemList = (props: CardItemListProps) => {
             <CardItem
               key={shop.id}
               shopData={shop}
-              handleForm={(openModal, shopID) => {
-                cardHandler(openModal, shopID);
+              handleForm={(openModal, shopData) => {
+                cardHandler(openModal, shopData);
               }}
             />
           );
         })}
+        <CardItem
+          shopData={null}
+          handleForm={(openModal, shopData) => {
+            cardHandler(openModal, null);
+          }}
+        />
       </ScrollView>
     </View>
   );

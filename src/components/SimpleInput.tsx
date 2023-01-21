@@ -54,7 +54,16 @@ interface ISimpleInput {
   secureTextEntry?: boolean;
   style?: StyleProp<ViewStyle>;
   inputTitle?: string;
-  keyboardType?: "default" | "number-pad" | "decimal-pad" | "numeric" | "email-address" | "phone-pad" | "url";
+  keyboardType?:
+    | "default"
+    | "number-pad"
+    | "decimal-pad"
+    | "numeric"
+    | "email-address"
+    | "phone-pad"
+    | "url";
+  editable?: boolean;
+  selectTextOnFocus?: boolean;
 }
 export const SimpleInput: React.FC<ISimpleInput> = ({
   value,
@@ -65,6 +74,8 @@ export const SimpleInput: React.FC<ISimpleInput> = ({
   style,
   inputTitle,
   keyboardType,
+  editable = true,
+  selectTextOnFocus = true,
 }) => {
   return (
     <View style={[styles.inputWrapper, style]}>
@@ -80,6 +91,8 @@ export const SimpleInput: React.FC<ISimpleInput> = ({
         style={styles.inputText}
         placeholderTextColor={Palette.LightBlue}
         keyboardType={keyboardType}
+        editable={editable}
+        selectTextOnFocus={selectTextOnFocus}
       />
     </View>
   );
