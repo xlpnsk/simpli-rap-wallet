@@ -6,9 +6,11 @@ import {
   View,
   Text,
   Pressable,
+  Modal,
 } from "react-native";
 import { Palette } from "../../style/palette";
 import * as WebBrowser from "expo-web-browser";
+import { CodeGenerator } from "../home/CodeGenerator";
 
 const { width } = Dimensions.get("window");
 const ratio = 228 / 362;
@@ -105,40 +107,64 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
   },
+  codeModal: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
 
 const Card = ({ navigation, item }) => {
-  let source: number;
+  const [codeModalOpen, setCodeModalOpen] = React.useState(false);
   console.log(item);
   return (
-    <View style={styles.card} {...{ source }}>
-      <View style={styles.cardInner}>
-        <View style={styles.shopNameContainer}>
-          <Text style={styles.shopName}>{item.shops.name}</Text>
-        </View>
-        <Pressable
-          style={styles.leaflet}
-          onPress={() => WebBrowser.openBrowserAsync(item.shops.leaflet_url)}
-        >
-          <Image
-            source={require("../../assets/leaflet.png")}
-            style={styles.leafletIcon}
-          />
-        </Pressable>
-      </View>
-      <View style={[styles.cardInner]}>
-        {item.shops.is_common ? (
+    <>
+      <View style={styles.card}>
+        <View style={styles.cardInner}>
+          <View style={styles.shopNameContainer}>
+            <Text style={styles.shopName}>{item.shops.name}</Text>
+          </View>
           <Pressable
-            style={styles.mapContainer}
-            onPress={() =>
-              navigation.navigate("Map", { shopName: item.shops.name })
-            }
+            style={styles.leaflet}
+            onPress={() => WebBrowser.openBrowserAsync(item.shops.leaflet_url)}
           >
-            <View style={styles.innerFrame}></View>
             <Image
-              source={{
-                uri: "https://i.stack.imgur.com/HILmr.png",
-              }}
+              source={require("../../assets/leaflet.png")}
+              style={styles.leafletIcon}
+            />
+          </Pressable>
+        </View>
+        <View style={[styles.cardInner]}>
+          {item.shops.is_common ? (
+            <Pressable
+              style={styles.mapContainer}
+              onPress={() =>
+                navigation.navigate("Map", { shopName: item.shops.name })
+              }
+            >
+              <View style={styles.innerFrame}></View>
+              <Image
+                source={{
+                  uri: "https://i.stack.imgur.com/HILmr.png",
+                }}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                }}
+              />
+            </Pressable>
+          ) : (
+            <View style={styles.spacer} />
+          )}
+          <Pressable
+            style={styles.qrContainer}
+            onPress={() => setCodeModalOpen(true)}
+          >
+            <Image
+              source={require("../../assets/qr-sample.png")}
               style={{
                 width: "100%",
                 height: "100%",
@@ -148,23 +174,17 @@ const Card = ({ navigation, item }) => {
               }}
             />
           </Pressable>
-        ) : (
-          <View style={styles.spacer} />
-        )}
-        <Pressable style={styles.qrContainer}>
-          <Image
-            source={require("../../assets/qr-sample.png")}
-            style={{
-              width: "100%",
-              height: "100%",
-              position: "absolute",
-              top: 0,
-              left: 0,
-            }}
-          />
-        </Pressable>
+        </View>
       </View>
-    </View>
+      <Modal
+        visible={codeModalOpen}
+        onRequestClose={() => setCodeModalOpen(false)}
+      >
+        <View style={styles.codeModal}>
+          <CodeGenerator data={item.card_code} type={item.code_type} />
+        </View>
+      </Modal>
+    </>
   );
 };
 export default Card;

@@ -37,6 +37,7 @@ const AddCardModal = (props: AddCardModalProps) => {
   const [scanned, setScanned] = React.useState(false);
   const [scannerText, setScannerText] = React.useState("Not yet scanned");
   const [scannerOpen, setScannerOpen] = React.useState(false);
+  const [codeType, setCodeType] = React.useState("");
 
   const session = React.useContext(SessionContext);
 
@@ -63,6 +64,7 @@ const AddCardModal = (props: AddCardModalProps) => {
     setShopName("");
     setCardNumber("");
     setShopURL("");
+    setCodeType("");
     setIsValidCardNumber(false);
     setIsValidShopName(false);
     setIsValidShopURL(false);
@@ -70,8 +72,8 @@ const AddCardModal = (props: AddCardModalProps) => {
   };
 
   const handleForm = async () => {
+    console.log(codeType, cardNumber);
     if (isValidShopName && isValidCardNumber && isValidShopURL === true) {
-      // console.log(shopData, shopName, cardNumber, shopURL);
       if (!shopData) {
         let { data: dbShop, error } = await supabase
           .from("shops")
@@ -83,7 +85,7 @@ const AddCardModal = (props: AddCardModalProps) => {
             await supabase.from("wallets").insert([
               {
                 card_code: cardNumber,
-                code_type: "",
+                code_type: codeType,
                 user_id: session.user.id,
                 shop_id: dbShop.at(0).id,
               },
@@ -111,7 +113,7 @@ const AddCardModal = (props: AddCardModalProps) => {
             await supabase.from("wallets").insert([
               {
                 card_code: cardNumber,
-                code_type: "",
+                code_type: codeType,
                 user_id: session.user.id,
                 shop_id: dbShop.at(0).id,
               },
@@ -126,12 +128,11 @@ const AddCardModal = (props: AddCardModalProps) => {
           Alert.alert(error.message);
         }
       } else {
-        //TODO: add code_type field to the form
         const { data: newWalletRecordData, error: newWalletRecordError } =
           await supabase.from("wallets").insert([
             {
               card_code: cardNumber,
-              code_type: "",
+              code_type: codeType,
               user_id: session.user.id,
               shop_id: shopData.id,
             },
@@ -164,7 +165,15 @@ const AddCardModal = (props: AddCardModalProps) => {
     setScanned(true);
     setScannerText(data);
     cardNumberChange(data);
-    console.log("Type: " + type + "\nData: " + data);
+    const types = BarCodeScanner.Constants.BarCodeType;
+    console.log(Object.entries(types), { type: type });
+
+    for (const [key, value] of Object.entries(types)) {
+      if (value === type) {
+        setCodeType(key);
+        break;
+      }
+    }
   };
 
   if (scannerOpen === false) {
