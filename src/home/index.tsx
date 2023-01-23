@@ -90,6 +90,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Palette.LightBlue,
+    position: "relative",
   },
   blob1: {
     position: "absolute",

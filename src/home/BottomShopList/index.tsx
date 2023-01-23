@@ -32,9 +32,7 @@ export const BottomShopList: React.FC<IBottomShopList> = ({
   }, []);
   return (
     <BottomSheetContent visible={visible} onClose={onClose}>
-      <View>
-        <CardItemList shopData={shopData} cardHandler={cardHandler} />
-      </View>
+      <CardItemList shopData={shopData} cardHandler={cardHandler} />
     </BottomSheetContent>
   );
 };

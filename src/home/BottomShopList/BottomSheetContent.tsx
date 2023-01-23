@@ -20,6 +20,12 @@ interface BottomSheetContentProps {
 const BottomSheetContent = (props: BottomSheetContentProps) => {
   const { visible, onClose, children } = props;
   const height = React.useRef(new Animated.Value(0)).current; // Initial value for opacity: 0
+  React.useEffect(() => {
+    console.log(visible);
+
+    if (visible) onModalShow();
+    else resetModalHeight();
+  }, [visible]);
 
   function onModalShow() {
     Animated.timing(height, {
@@ -32,7 +38,7 @@ const BottomSheetContent = (props: BottomSheetContentProps) => {
   function swipeUp() {
     Animated.timing(height, {
       toValue: Dimensions.get("window").height * 0.9,
-      duration: 500,
+      duration: 400,
       useNativeDriver: false,
     }).start();
   }
@@ -40,59 +46,58 @@ const BottomSheetContent = (props: BottomSheetContentProps) => {
   function resetModalHeight() {
     Animated.timing(height, {
       toValue: 0,
-      duration: 500,
+      duration: 400,
       useNativeDriver: false,
     }).start();
-    setTimeout(() => {
-      onClose(false);
-    }, 1700);
+    onClose(false);
   }
 
   return (
-    <Modal
-      visible={visible}
-      onShow={() => {
-        onModalShow();
+    <TouchableWithoutFeedback
+      style={{
+        height: "100%",
+        width: "100%",
+        // position: "absolute",
+        backgroundColor: "blue",
       }}
-      transparent={true}
-      style={{ zIndex: -11 }}
+      onPress={() => {
+        resetModalHeight();
+      }}
     >
-      <GestureRecognizer
-        style={styles.modal}
-        onSwipeUp={() => {
-          swipeUp();
-        }}
-        onSwipeDown={() => {
-          resetModalHeight();
+      <Animated.View
+        style={{
+          height: height,
         }}
       >
-        <TouchableWithoutFeedback
-          onPress={() => {
+        <GestureRecognizer
+          style={styles.modal}
+          onSwipeUp={() => {
+            swipeUp();
+          }}
+          onSwipeDown={() => {
             resetModalHeight();
-            //onClose()
           }}
         >
-          <View style={styles.bottomSheet}>
-            <View style={styles.dummy}></View>
-            <TouchableWithoutFeedback>
-              <Animated.View
-                style={[styles.bottomSheetContent, { height: height }]}
-              >
-                {/* <View style={styles.handlerWrapper}>
-                                    <View style={styles.handler}></View>
-                                </View> */}
-                <View>
-                  <Text style={styles.upperText}> Select your type card </Text>
-                </View>
-                {children ? (
-                  <View style={styles.children}>{children}</View>
-                ) : null}
-              </Animated.View>
-            </TouchableWithoutFeedback>
-          </View>
-        </TouchableWithoutFeedback>
-      </GestureRecognizer>
-    </Modal>
+          <TouchableWithoutFeedback
+            onPress={() => {
+              resetModalHeight();
+              //onClose()
+            }}
+          >
+            <Animated.View
+              style={[styles.bottomSheetContent, { height: height }]}
+            >
+              <View>
+                <Text style={styles.upperText}> Select your type card </Text>
+              </View>
+              {children ? (
+                <View style={styles.children}>{children}</View>
+              ) : null}
+            </Animated.View>
+          </TouchableWithoutFeedback>
+        </GestureRecognizer>
+      </Animated.View>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -102,12 +107,19 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
   },
-  bottomSheet: {},
-  dummy: {},
   bottomSheetContent: {
     borderTopLeftRadius: 50,
     borderTopRightRadius: 50,
     backgroundColor: "white",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
+
+    elevation: 4,
   },
   handlerWrapper: {
     alignItems: "center",
