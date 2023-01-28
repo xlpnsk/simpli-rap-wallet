@@ -14,7 +14,7 @@ export interface IWallet {
   shops: IShopData;
 }
 
-const Wallet = ({ navigation, route, walletData }) => {
+const Wallet = ({ navigation, route, walletData, deleteWalletData }) => {
   const y = new Animated.Value(0);
   const onScroll = Animated.event([{ nativeEvent: { contentOffset: { y } } }], {
     useNativeDriver: true,
@@ -26,7 +26,9 @@ const Wallet = ({ navigation, route, walletData }) => {
       bounces={false}
       data={walletData}
       renderItem={({ index, item }) => (
-        <WalletCard {...{ index, y, navigation, item, route }} />
+        <WalletCard
+          {...{ index, y, navigation, item, route, deleteWalletData }}
+        />
       )}
       keyExtractor={(item, index) => `${index}`}
       {...{ onScroll }}
