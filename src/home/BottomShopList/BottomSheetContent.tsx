@@ -7,7 +7,9 @@ import {
   TouchableWithoutFeedback,
   View,
   Text,
+  ScrollView,
 } from "react-native";
+import { Button } from "../../components/Button";
 
 import GestureRecognizer from "react-native-swipe-gestures";
 
@@ -17,45 +19,58 @@ interface BottomSheetContentProps {
   children: React.ReactNode;
 }
 
+const height = 0.9 * Dimensions.get("window").height;
+
 const BottomSheetContent = (props: BottomSheetContentProps) => {
   const { visible, onClose, children } = props;
-  const height = React.useRef(new Animated.Value(0)).current; // Initial value for opacity: 0
+  const y = React.useRef(
+    new Animated.Value(0.9 * Dimensions.get("window").height)
+  ).current;
+
+  React.useEffect(() => {
+    console.log(visible);
+    if (visible) onModalShow();
+    else resetModalHeight();
+  }, [visible]);
+
+  React.useEffect(() => {
+    console.log(y);
+  });
 
   function onModalShow() {
-    Animated.timing(height, {
-      toValue: Dimensions.get("window").height / 2,
+    Animated.timing(y, {
+      toValue: height / 2,
       duration: 500,
-      useNativeDriver: false,
+      useNativeDriver: true,
     }).start();
   }
 
   function swipeUp() {
-    Animated.timing(height, {
-      toValue: Dimensions.get("window").height * 0.9,
-      duration: 500,
-      useNativeDriver: false,
+    Animated.timing(y, {
+      toValue: 0,
+      duration: 400,
+      useNativeDriver: true,
     }).start();
   }
 
   function resetModalHeight() {
-    Animated.timing(height, {
-      toValue: 0,
-      duration: 500,
-      useNativeDriver: false,
+    Animated.timing(y, {
+      toValue: height,
+      duration: 400,
+      useNativeDriver: true,
     }).start();
-    setTimeout(() => {
-      onClose(false);
-    }, 1700);
+    onClose(false);
   }
 
   return (
-    <Modal
-      visible={visible}
-      onShow={() => {
-        onModalShow();
+    <Animated.View
+      style={{
+        height: height,
+        position: "absolute",
+        bottom: 0,
+        overflow: "hidden",
+        transform: [{ translateY: y }, { perspective: 1000 }],
       }}
-      transparent={true}
-      style={{ zIndex: -11 }}
     >
       <GestureRecognizer
         style={styles.modal}
@@ -66,48 +81,44 @@ const BottomSheetContent = (props: BottomSheetContentProps) => {
           resetModalHeight();
         }}
       >
-        <TouchableWithoutFeedback
-          onPress={() => {
-            resetModalHeight();
-            //onClose()
-          }}
-        >
-          <View style={styles.bottomSheet}>
-            <View style={styles.dummy}></View>
-            <TouchableWithoutFeedback>
-              <Animated.View
-                style={[styles.bottomSheetContent, { height: height }]}
-              >
-                {/* <View style={styles.handlerWrapper}>
-                                    <View style={styles.handler}></View>
-                                </View> */}
-                <View>
-                  <Text style={styles.upperText}> Select your type card </Text>
-                </View>
-                {children ? (
-                  <View style={styles.children}>{children}</View>
-                ) : null}
-              </Animated.View>
-            </TouchableWithoutFeedback>
+        <ScrollView style={[styles.bottomSheetContent]}>
+          <View>
+            <Text style={styles.upperText}> Select your type card </Text>
           </View>
-        </TouchableWithoutFeedback>
+          {children && <View style={styles.children}>{children}</View>}
+          <Button style={styles.button} onPress={resetModalHeight}>
+            Hide
+          </Button>
+        </ScrollView>
       </GestureRecognizer>
-    </Modal>
+    </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
+  button: {
+    marginLeft: "auto",
+    marginRight: "auto",
+    width: "90%",
+  },
   modal: {
     flex: 1,
-    position: "absolute",
-    bottom: 0,
   },
-  bottomSheet: {},
-  dummy: {},
   bottomSheetContent: {
+    display: "flex",
+    flex: 1,
     borderTopLeftRadius: 50,
     borderTopRightRadius: 50,
     backgroundColor: "white",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
+
+    elevation: 4,
   },
   handlerWrapper: {
     alignItems: "center",

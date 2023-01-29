@@ -29,6 +29,10 @@ const Home = ({ navigation, route }: Props) => {
     setShopData(shopData);
   };
 
+  const deleteWalletRecord = (id: number) => {
+    setWallet((data) => data.filter((d) => d.id !== id));
+  };
+
   const fetchWallet = async () => {
     let { data: walletData, error: walletError } = await supabase
       .from("wallets")
@@ -60,7 +64,12 @@ const Home = ({ navigation, route }: Props) => {
         <Blob1SVG style={styles.blob1} />
         <Blob2SVG style={styles.blob2} />
         <Blob3SVG style={styles.blob3} />
-        <Wallet walletData={wallet} navigation={navigation} route={route} />
+        <Wallet
+          walletData={wallet}
+          navigation={navigation}
+          route={route}
+          deleteWalletData={deleteWalletRecord}
+        />
         <AddButton onPress={() => setOpenModal(true)} />
         <BottomShopList
           visible={openModal}
@@ -90,6 +99,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Palette.LightBlue,
+    position: "relative",
   },
   blob1: {
     position: "absolute",

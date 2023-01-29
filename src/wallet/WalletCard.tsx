@@ -22,9 +22,16 @@ interface WalletCardProps extends Props {
   y: Animated.Value;
   index: number;
   item: IWallet;
+  deleteWalletData;
 }
 
-const WalletCard = ({ y, index, navigation, item }: WalletCardProps) => {
+const WalletCard = ({
+  y,
+  index,
+  navigation,
+  item,
+  deleteWalletData,
+}: WalletCardProps) => {
   const position = Animated.subtract(index * CARD_HEIGHT, y);
   const isDisappearing = -CARD_HEIGHT;
   const isTop = 0;
@@ -59,7 +66,11 @@ const WalletCard = ({ y, index, navigation, item }: WalletCardProps) => {
       style={[styles.card, { opacity, transform: [{ translateY }, { scale }] }]}
       key={index}
     >
-      <Card navigation={navigation} item={item} />
+      <Card
+        navigation={navigation}
+        item={item}
+        deleteWalletData={deleteWalletData}
+      />
     </Animated.View>
   );
 };

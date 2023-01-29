@@ -7,10 +7,17 @@ import {
   Text,
   Pressable,
   Modal,
+  Animated,
+  PanResponder,
+  Alert,
 } from "react-native";
 import { Palette } from "../../style/palette";
 import * as WebBrowser from "expo-web-browser";
 import { CodeGenerator } from "../home/CodeGenerator";
+import GestureRecognizer from "react-native-swipe-gestures";
+import { Icon } from "react-native-elements";
+import { supabase } from "../supabase";
+import { SessionContext } from "../root";
 
 const { width } = Dimensions.get("window");
 const ratio = 228 / 362;
@@ -28,6 +35,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     gap: 20,
+    overflow: "hidden",
   },
   shopName: {
     fontSize: 19,
@@ -114,39 +122,102 @@ const styles = StyleSheet.create({
   },
 });
 
-const Card = ({ navigation, item }) => {
+const AnimatedGestureRecognizer =
+  Animated.createAnimatedComponent(GestureRecognizer);
+
+const Card = ({ navigation, item, deleteWalletData }) => {
   const [codeModalOpen, setCodeModalOpen] = React.useState(false);
-  console.log(item);
+  const x = React.useRef(new Animated.Value(0)).current;
+  const session = React.useContext(SessionContext);
+
+  const handleDelete = async (id: number) => {
+    const { data, error } = await supabase
+      .from("wallets")
+      .delete()
+      .eq("id", id)
+      .eq("user_id", session.user.id);
+
+    if (error) {
+      Alert.alert(error.message);
+      return;
+    } else {
+      deleteWalletData(id);
+    }
+  };
+
+  const swipeLeftHandler = () => {
+    Animated.timing(x, {
+      toValue: -0.2 * CARD_WIDTH,
+      duration: 150,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const swipeRightHandler = () => {
+    Animated.timing(x, {
+      toValue: 0,
+      duration: 150,
+      useNativeDriver: true,
+    }).start();
+  };
+
   return (
     <>
       <View style={styles.card}>
-        <View style={styles.cardInner}>
-          <View style={styles.shopNameContainer}>
-            <Text style={styles.shopName}>{item.shops.name}</Text>
-          </View>
-          <Pressable
-            style={styles.leaflet}
-            onPress={() => WebBrowser.openBrowserAsync(item.shops.leaflet_url)}
-          >
-            <Image
-              source={require("../../assets/leaflet.png")}
-              style={styles.leafletIcon}
-            />
-          </Pressable>
-        </View>
-        <View style={[styles.cardInner]}>
-          {item.shops.is_common ? (
+        <AnimatedGestureRecognizer
+          onSwipeLeft={swipeLeftHandler}
+          onSwipeRight={swipeRightHandler}
+          style={{
+            transform: [{ translateX: x }],
+          }}
+        >
+          <View style={styles.cardInner}>
+            <View style={styles.shopNameContainer}>
+              <Text style={styles.shopName}>{item.shops.name}</Text>
+            </View>
             <Pressable
-              style={styles.mapContainer}
+              style={styles.leaflet}
               onPress={() =>
-                navigation.navigate("Map", { shopName: item.shops.name })
+                WebBrowser.openBrowserAsync(item.shops.leaflet_url)
               }
             >
-              <View style={styles.innerFrame}></View>
               <Image
-                source={{
-                  uri: "https://i.stack.imgur.com/HILmr.png",
-                }}
+                source={require("../../assets/leaflet.png")}
+                style={styles.leafletIcon}
+              />
+            </Pressable>
+          </View>
+          <View style={[styles.cardInner]}>
+            {item.shops.is_common ? (
+              <Pressable
+                style={styles.mapContainer}
+                onPress={() =>
+                  navigation.navigate("Map", { shopName: item.shops.name })
+                }
+              >
+                <View style={styles.innerFrame}></View>
+                <Image
+                  source={{
+                    uri: "https://i.stack.imgur.com/HILmr.png",
+                  }}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                  }}
+                />
+              </Pressable>
+            ) : (
+              <View style={styles.spacer} />
+            )}
+            <Pressable
+              style={styles.qrContainer}
+              onPress={() => setCodeModalOpen(true)}
+            >
+              <Image
+                source={require("../../assets/qr-sample.png")}
                 style={{
                   width: "100%",
                   height: "100%",
@@ -156,25 +227,24 @@ const Card = ({ navigation, item }) => {
                 }}
               />
             </Pressable>
-          ) : (
-            <View style={styles.spacer} />
-          )}
+          </View>
+
           <Pressable
-            style={styles.qrContainer}
-            onPress={() => setCodeModalOpen(true)}
+            style={{
+              position: "absolute",
+              height: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              left: "100%",
+              width: 0.2 * CARD_WIDTH,
+              backgroundColor: "red",
+            }}
+            onPress={() => handleDelete(item.id)}
           >
-            <Image
-              source={require("../../assets/qr-sample.png")}
-              style={{
-                width: "100%",
-                height: "100%",
-                position: "absolute",
-                top: 0,
-                left: 0,
-              }}
-            />
+            <Icon type="font-awesome" name="trash" />
           </Pressable>
-        </View>
+        </AnimatedGestureRecognizer>
       </View>
       <Modal
         visible={codeModalOpen}

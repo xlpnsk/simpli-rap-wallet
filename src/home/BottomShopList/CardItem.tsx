@@ -15,14 +15,9 @@ const CardItem = (props: CardItemProps) => {
     <View style={styles.container}>
       <View style={styles.cardItem}>
         <View style={styles.iconAndContent}>
-          <View style={styles.cardIcon}>
-            <Text> ikon</Text>
-          </View>
+          <View style={styles.cardIcon}></View>
           <View style={styles.cardContent}>
-            <Text>
-              {/* {.id} */}
-              {shopData?.name || "Nowy sklep"}
-            </Text>
+            <Text>{shopData?.name || "Nowy sklep"}</Text>
           </View>
         </View>
         <View style={styles.cardButton}>
