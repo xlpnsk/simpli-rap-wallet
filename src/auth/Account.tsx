@@ -1,10 +1,12 @@
 import * as React from "react";
 import { supabase } from "../supabase";
-import { StyleSheet, View, Alert } from "react-native";
+import { StyleSheet, View, Alert, Text } from "react-native";
 import { Input } from "react-native-elements";
 import { Session } from "@supabase/supabase-js";
 import { SessionContext } from "../root";
 import { Button } from "../components/Button";
+import { Palette } from "../../style/palette";
+import { color } from "react-native-reanimated";
 
 export default function Account() {
   const [loading, setLoading] = React.useState(true);
@@ -81,25 +83,34 @@ export default function Account() {
 
   return (
     <View>
+      <View style={[styles.verticallySpaced]}>
+      <Text style={[styles.text]}>Email</Text>
+      </View>
       <View style={[styles.verticallySpaced, styles.mt20]}>
-        <Input label="Email" value={session?.user?.email} disabled />
+        <Input style={[styles.input]} value={session?.user?.email} disabled />
       </View>
       <View style={styles.verticallySpaced}>
+      <Text style={[styles.text]}>UserName</Text>
+      </View>
+      <View style={[styles.verticallySpaced, styles.mt20]}>
         <Input
-          label="Username"
+          style={[styles.input]}
           value={username || ""}
           onChangeText={(text) => setUsername(text)}
         />
       </View>
       <View style={styles.verticallySpaced}>
+      <Text style={[styles.text]}>WebSite</Text>
+      </View>
+      <View style={[styles.verticallySpaced, styles.mt20]}>
         <Input
-          label="Website"
+          style={[styles.input]}
           value={website || ""}
           onChangeText={(text) => setWebsite(text)}
         />
       </View>
 
-      <View style={[styles.verticallySpaced, styles.mt20]}>
+      <View style={[styles.verticallySpaced, styles.button]}>
         <Button
           onPress={() =>
             updateProfile({ username, website, avatar_url: avatarUrl })
@@ -110,7 +121,7 @@ export default function Account() {
         </Button>
       </View>
 
-      <View style={styles.verticallySpaced}>
+      <View style={[styles.verticallySpaced, styles.button]}>
         <Button onPress={() => supabase.auth.signOut()}>Sign Out</Button>
       </View>
     </View>
@@ -128,6 +139,35 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
   },
   mt20: {
-    marginTop: 20,
+    marginTop:5,
+    marginLeft:5,
+    marginRight:5,
+    borderRadius: 25,
+    backgroundColor: Palette.DarkBlue,
+    
+  },
+  input:{
+    color: "#f8f8ff",
+    textDecorationColor: "#f8f8ff",
+    tintColor: "#f8f8ff",
+    baseColor: "white",
+    backgroundColor: Palette.DarkBlue,
+    borderRadius: 15,
+    padding: 10,
+  },
+  button:{
+    marginLeft:5,
+    marginRight:5,
+  },
+  text:{
+    backgroundColor: Palette.Fuchsia,
+    borderRadius: 20,
+    padding: 10,
+    paddingBottom:20,
+    color: "white",
+    marginRight: 220,
+    marginLeft:20,
+    marginBottom: -25,
+    textAlign: "center",
   },
 });
