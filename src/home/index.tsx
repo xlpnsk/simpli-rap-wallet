@@ -84,6 +84,7 @@ const Home = ({ navigation, route }: Props) => {
           buttonText={"Proceed"}
           onClose={() => {
             setOpenCardForm(false);
+            setShopData(null);
             fetchWallet().catch((error) => Alert.alert(error.message));
           }}
           shopData={shopData}

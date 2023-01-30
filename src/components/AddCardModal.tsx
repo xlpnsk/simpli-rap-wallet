@@ -79,7 +79,9 @@ const AddCardModal = (props: AddCardModalProps) => {
           .from("shops")
           .select("id")
           .eq("name", shopName);
-        if (!error && dbShop.at(0)) {
+        console.log(dbShop);
+
+        if (!error && dbShop.length > 0) {
           //shop does exist in db
           const { data: newWalletRecordData, error: newWalletRecordError } =
             await supabase.from("wallets").insert([
@@ -87,7 +89,7 @@ const AddCardModal = (props: AddCardModalProps) => {
                 card_code: cardNumber,
                 code_type: codeType,
                 user_id: session.user.id,
-                shop_id: dbShop.at(0).id,
+                shop_id: dbShop[0]?.id,
               },
             ]);
           if (newWalletRecordError) {
@@ -97,7 +99,7 @@ const AddCardModal = (props: AddCardModalProps) => {
           Alert.alert("Card successfully added");
         } else if (!error && !dbShop.at(0)) {
           //shop does not exist in db
-          const { data: newShopData, error: newShopDataError } = await supabase
+          const { data, error: newShopDataError } = await supabase
             .from("shops")
             .insert([
               {
@@ -109,13 +111,21 @@ const AddCardModal = (props: AddCardModalProps) => {
             Alert.alert(newShopDataError.message);
             return;
           }
+          const { data: newShopData, error: newShopError } = await supabase
+            .from("shops")
+            .select("id")
+            .eq("name", shopName);
+          if (newShopError) {
+            Alert.alert(newShopDataError.message);
+            return;
+          }
           const { data: newWalletRecordData, error: newWalletRecordError } =
             await supabase.from("wallets").insert([
               {
                 card_code: cardNumber,
                 code_type: codeType,
                 user_id: session.user.id,
-                shop_id: dbShop.at(0).id,
+                shop_id: newShopData.length > 0 && newShopData.at(0).id,
               },
             ]);
           if (newWalletRecordError) {

@@ -140,11 +140,23 @@ const Map = ({ route }: Props) => {
     };
     const searchStores = async () => {
       const bboxString = await getBBox();
-      const resp = await fetch(getSearchEndpoint(shopName, bboxString));
-      console.log(resp);
-      const json = await resp.json();
-      console.log(json);
-      setShops(json.elements);
+      try {
+        const resp = await fetch(getSearchEndpoint(shopName, bboxString), {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        console.log(resp);
+        try {
+          const json = await resp.json();
+          setShops(json.elements);
+        } catch (err) {
+          console.log(err);
+        }
+      } catch (error) {
+        console.log(error);
+      }
     };
     console.log(region);
     mapRef?.current && searchStores();
